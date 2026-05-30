@@ -1,4 +1,4 @@
--- ============================================================
+﻿-- ============================================================
 -- CMHC HOUSING DATA GOVERNANCE PROJECT
 -- Data Quality Rules — SQL Implementation
 -- Author: Ram Krishna Dhakal
@@ -166,6 +166,97 @@ FROM housing_starts
 WHERE STATUS NOT IN ('', 'E', 'F', 'r')
   AND STATUS IS NOT NULL;
 
+
+-- ── DQ-013: Housing Starts Accuracy — Statistical Range ─────
+-- Dimension: Accuracy | Severity: High | CDE: HOUSING_STARTS
+-- Business Rule: HOUSING_STARTS must not exceed 20,000 OR
+-- mean + 3 standard deviations for the same province.
+-- Z-score approach catches province-specific outliers that
+-- absolute thresholds miss (e.g. 661 starts in SK when avg is 193).
+WITH province_stats AS (
+    SELECT
+        GEO_CODE,
+        AVG(HOUSING_STARTS)    AS hs_mean,
+        STDDEV(HOUSING_STARTS) AS hs_std
+    FROM housing_starts
+    WHERE HOUSING_STARTS IS NOT NULL
+    GROUP BY GEO_CODE
+)
+SELECT
+    h.'DQ-013'                                        AS rule_id,
+    'Housing Starts Accuracy — Statistical Range'     AS rule_name,
+    'Accuracy'                                         AS dq_dimension,
+    h.REF_DATE, h.GEO_CODE, h.DWELLING_TYPE, h.INTENDED_MARKET,
+    h.HOUSING_STARTS                                   AS failed_value,
+    p.hs_mean, p.hs_std,
+    ROUND(p.hs_mean + 3 * p.hs_std, 0)                AS upper_threshold,
+    'HOUSING_STARTS exceeds statistical plausibility threshold for this province' AS failure_reason
+FROM housing_starts h
+JOIN province_stats p ON h.GEO_CODE = p.GEO_CODE
+WHERE h.HOUSING_STARTS > 20000
+   OR h.HOUSING_STARTS > p.hs_mean + 3 * p.hs_std;
+
+-- ── DQ-014: Average Price Accuracy — Statistical Range ──────
+-- Dimension: Accuracy | Severity: High | CDE: AVERAGE_PRICE_CAD
+-- Business Rule: AVERAGE_PRICE_CAD must be between $100,000
+-- and $3,000,000, AND not exceed mean + 3 std dev per province.
+WITH price_stats AS (
+    SELECT
+        GEO_CODE,
+        AVG(AVERAGE_PRICE_CAD)    AS price_mean,
+        STDDEV(AVERAGE_PRICE_CAD) AS price_std
+    FROM housing_starts
+    WHERE AVERAGE_PRICE_CAD IS NOT NULL
+    GROUP BY GEO_CODE
+)
+SELECT
+    'DQ-014'                                           AS rule_id,
+    'Average Price Accuracy — Statistical Range'       AS rule_name,
+    'Accuracy'                                         AS dq_dimension,
+    h.REF_DATE, h.GEO_CODE, h.DWELLING_TYPE, h.INTENDED_MARKET,
+    h.AVERAGE_PRICE_CAD                                AS failed_value,
+    p.price_mean, p.price_std,
+    ROUND(p.price_mean + 3 * p.price_std, 2)           AS upper_threshold,
+    CASE
+        WHEN h.AVERAGE_PRICE_CAD < 100000     THEN 'Price below $100,000 minimum threshold'
+        WHEN h.AVERAGE_PRICE_CAD > 3000000    THEN 'Price exceeds $3,000,000 maximum threshold'
+        ELSE 'Price exceeds mean + 3 std dev for this province'
+    END AS failure_reason
+FROM housing_starts h
+JOIN price_stats p ON h.GEO_CODE = p.GEO_CODE
+WHERE h.AVERAGE_PRICE_CAD IS NOT NULL
+  AND (
+    h.AVERAGE_PRICE_CAD < 100000
+    OR h.AVERAGE_PRICE_CAD > 3000000
+    OR h.AVERAGE_PRICE_CAD > p.price_mean + 3 * p.price_std
+  );
+
+-- ── DQ-015: GEO and GEO_CODE Consistency ────────────────────
+-- Dimension: Consistency | Severity: Critical
+-- CDE: GEO + GEO_CODE
+-- Business Rule: GEO (full province name) and GEO_CODE
+-- (2-letter code) must always refer to the same province.
+-- A mismatch indicates a data entry or ETL join error.
+SELECT
+    'DQ-015'                               AS rule_id,
+    'GEO and GEO_CODE Consistency'         AS rule_name,
+    'Consistency'                           AS dq_dimension,
+    REF_DATE, GEO, GEO_CODE,
+    'GEO name and GEO_CODE refer to different provinces' AS failure_reason
+FROM housing_starts
+WHERE (GEO = 'Ontario'                    AND GEO_CODE != 'ON')
+   OR (GEO = 'British Columbia'           AND GEO_CODE != 'BC')
+   OR (GEO = 'Alberta'                    AND GEO_CODE != 'AB')
+   OR (GEO = 'Quebec'                     AND GEO_CODE != 'QC')
+   OR (GEO = 'Manitoba'                   AND GEO_CODE != 'MB')
+   OR (GEO = 'Saskatchewan'              AND GEO_CODE != 'SK')
+   OR (GEO = 'Nova Scotia'               AND GEO_CODE != 'NS')
+   OR (GEO = 'New Brunswick'             AND GEO_CODE != 'NB')
+   OR (GEO = 'Newfoundland and Labrador' AND GEO_CODE != 'NL')
+   OR (GEO = 'Prince Edward Island'      AND GEO_CODE != 'PE')
+   OR (GEO = 'Northwest Territories'     AND GEO_CODE != 'NT')
+   OR (GEO = 'Yukon'                     AND GEO_CODE != 'YT')
+   OR (GEO = 'Nunavut'                   AND GEO_CODE != 'NU');
 -- ── SUMMARY SCORECARD QUERY ──────────────────────────────────
 -- Returns overall pass rate per DQ dimension
 SELECT
@@ -176,3 +267,4 @@ SELECT
 FROM dq_rule_results
 GROUP BY dq_dimension
 ORDER BY avg_pass_rate ASC;
+
