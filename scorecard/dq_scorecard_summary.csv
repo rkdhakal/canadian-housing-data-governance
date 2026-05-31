@@ -1,2 +1,2 @@
 Dataset,Scorecard_Date,Total_Records,Total_DQ_Rules,Rules_PASS,Rules_WARN,Rules_FAIL,Total_Rule_Failures,Overall_DQ_Score_Pct,Overall_Grade,Completeness_Score,Validity_Score,Uniqueness_Score,Accuracy_Score,Consistency_Score,Recommended_Action
-cmhc_housing_starts_2018_2023,2026-05-30,10800,15,9,6,0,884,99.45,B,98.44,99.56,100.0,99.43,100.0,"Escalate DQ-001, DQ-002, DQ-003, DQ-004, DQ-013, DQ-014 to Data Steward for remediation."
+cmhc_housing_starts_2018_2023,2026-05-30,10800,15,9,6,0,884,99.45,A,98.44,99.56,100.0,99.43,100.0,"Escalate DQ-001, DQ-002, DQ-003, DQ-004, DQ-013, DQ-014 to Data Steward for remediation."

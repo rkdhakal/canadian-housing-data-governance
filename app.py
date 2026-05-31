@@ -582,8 +582,11 @@ def tab_executive():
     overall_score   = float(row.get("Overall_DQ_Score_Pct", 0))
     overall_grade   = str(row.get("Overall_Grade", ""))
     recommended     = str(row.get("Recommended_Action", ""))
-    clean_pct       = round(100 * (total_records - total_failures) / total_records, 1) \
-                      if total_records > 0 else 100.0
+    # Use unique failed records (not sum of rule failures) — same method as Run on Your Data tab
+    exc_df_tmp = load_exceptions()
+    n_unique_failed = exc_df_tmp["_record_id"].nunique() if exc_df_tmp is not None and "_record_id" in exc_df_tmp.columns else total_failures
+    clean_pct = round(100 * (total_records - n_unique_failed) / total_records, 1) \
+                if total_records > 0 else 100.0
 
     # ── Metric cards ──
     st.markdown('<p class="section-heading">Overall Data Quality Metrics</p>', unsafe_allow_html=True)
