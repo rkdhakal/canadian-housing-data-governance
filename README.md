@@ -5,7 +5,7 @@
 **Author:** Ram Krishna Dhakal  
 **Tools:** Python · SQL · Collibra · Informatica IDMC  
 **Dataset:** CMHC Housing Starts — Canada (2018–2023) | 10,800 records · 16 columns · 10 provinces  
-**Live Reports:** [DQ Execution Report](https://rkdhakal.github.io/cmhc-housing-data-governance/docs/dq_execution_report.html) · [Data Profile Report](https://rkdhakal.github.io/cmhc-housing-data-governance/docs/data_profile_report.html)
+**Live Dashboard:** [Interactive DQ Dashboard](https://cmhc-housing-data-governance-zaslgtkfkxi5n5agrz87th.streamlit.app)
 
 ---
 
@@ -185,13 +185,11 @@ The DQ engine doesn't just flag failures — it diagnoses them:
 
 ---
 
-## 📊 Live HTML Reports
+## 📊 Interactive Dashboard
 
-| Report | Description |
-|--------|-------------|
-| [**DQ Execution Report**](https://rkdhakal.github.io/cmhc-housing-data-governance/docs/dq_execution_report.html) | 15 DQ rules execution results, root cause analysis by province and dwelling type, remediation actions |
-| [**Interactive DQ Dashboard**](https://rkdhakal-cmhc-housing-data-governance-app-kctmvs.streamlit.app) | Live Streamlit app — filter rules, explore exceptions, upload your own data |
-| [**Data Profile Report**](https://rkdhakal.github.io/cmhc-housing-data-governance/docs/data_profile_report.html) | Column-level profiling, completeness rates, domain validation, outlier detection, duplicate analysis |
+| Tool | Description |
+|------|-------------|
+| [🏠 **CMHC DQ Dashboard**](https://cmhc-housing-data-governance-zaslgtkfkxi5n5agrz87th.streamlit.app) | Live Streamlit app — executive scorecard, all 15 DQ rules, explore 884 exceptions, upload your own dataset |
 
 ---
 
@@ -325,3 +323,4 @@ Data Governance & Quality Analyst | Toronto, ON
 📧 [dramkrishna19@gmail.com](mailto:dramkrishna19@gmail.com)  
 🔗 [linkedin.com/in/ramkrishnadhakal](https://linkedin.com/in/ramkrishnadhakal)  
 💻 [github.com/rkdhakal](https://github.com/rkdhakal)
+

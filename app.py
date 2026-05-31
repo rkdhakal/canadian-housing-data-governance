@@ -122,7 +122,8 @@ REQUIRED_COLUMNS = [
     "INTENDED_MARKET", "HOUSING_STARTS", "AVERAGE_PRICE_CAD",
 ]
 
-GITHUB_REPO  = "https://github.com/rkdhakal/cmhc-housing-data-governance"
+GITHUB_REPO    = "https://github.com/rkdhakal/cmhc-housing-data-governance"
+STREAMLIT_URL  = "https://cmhc-housing-data-governance-zaslgtkfkxi5n5agrz87th.streamlit.app"
 LIVE_REPORT  = "https://rkdhakal.github.io/cmhc-housing-data-governance/docs/dq_execution_report.html"
 
 # ── Data loaders ──────────────────────────────────────────────────────────────
@@ -944,4 +945,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
