@@ -124,7 +124,6 @@ REQUIRED_COLUMNS = [
 
 GITHUB_REPO    = "https://github.com/rkdhakal/cmhc-housing-data-governance"
 STREAMLIT_URL  = "https://cmhc-housing-data-governance-zaslgtkfkxi5n5agrz87th.streamlit.app"
-LIVE_REPORT  = "https://rkdhakal.github.io/cmhc-housing-data-governance/docs/dq_execution_report.html"
 
 # ── Data loaders ──────────────────────────────────────────────────────────────
 
@@ -547,10 +546,7 @@ def render_sidebar():
     st.sidebar.markdown(f"**Last DQ Run:** `{scorecard_date}`")
 
     st.sidebar.markdown("---")
-    st.sidebar.markdown(
-        f"🔗 [GitHub Repo]({GITHUB_REPO})  \n"
-        f"📄 [Live DQ Report]({LIVE_REPORT})"
-    )
+    st.sidebar.markdown(f"🔗 [GitHub Repo]({GITHUB_REPO})")
 
     with st.sidebar.expander("ℹ️ About this project"):
         st.write(

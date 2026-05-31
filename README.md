@@ -1,4 +1,4 @@
-﻿# 🏠 Canadian Housing Data Governance & Quality Framework
+# 🏠 Canadian Housing Data Governance & Quality Framework
 
 **An end-to-end data governance and data quality framework applied to Canadian housing data — demonstrating metadata cataloging, data lineage, stewardship, DQ rule execution, and quality scorecards.**
 
@@ -33,23 +33,25 @@ It is designed to demonstrate the **full governance lifecycle** as practiced in 
 | Identified **6 Critical Data Elements** with business justification and column-level lineage | CDEs are the foundation of any governance program — knowing which fields matter most determines where you invest DQ effort |
 | Established a **stewardship operating model** with RACI matrix and 4-level escalation framework | This is the people and process layer that most portfolio projects skip — governance isn't just rules, it's accountability |
 | Produced **catalog artifacts compatible with Collibra Data Intelligence Cloud** | The CSV-based catalog, glossary, and stewardship files can be directly imported into enterprise governance platforms |
-| Built **automated profiling** replicating Informatica IDMC profiling capabilities | Column-level stats, null analysis, domain validation, outlier detection, and duplicate checks — all in a single Python script |
+| Built an **interactive Streamlit DQ dashboard** with live scorecard, exception explorer, and custom dataset validation | Replicates the governance reporting and steward review workflow used in IDMC and Collibra |
 
 ---
 
-## 📸 Screenshots
+## 📊 Interactive Dashboard
 
-### DQ Execution Report
-> 15 rules executed with pass rates, severity levels, and root cause analysis for failures
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://cmhc-housing-data-governance-zaslgtkfkxi5n5agrz87th.streamlit.app)
 
-![DQ Execution Report](docs/dq_execution_report_screenshot.png)
+| Tab | What it shows |
+|-----|---------------|
+| **Executive Scorecard** | Overall DQ score, dimension scores, rule-by-rule pass rates, CDE table |
+| **DQ Rules** | Filterable rule catalogue with full detail, SQL logic, and CSV download |
+| **Exception Explorer** | 884 exceptions filterable by dimension, rule, province, dwelling type |
+| **Run on Your Data** | Upload any CMHC-format CSV and run all 15 rules live |
 
-### Data Profile Report
-> Column-level profiling with completeness, domain validation, and duplicate analysis
+---
 
-![Data Profile Report](docs/data_profile_report_screenshot.png)
+## 📸 Data Lineage Diagram
 
-### Data Lineage Diagram
 > 5-layer source-to-consumption lineage with CDE tracking
 
 ![Data Lineage](docs/data_lineage_diagram.png)
@@ -86,7 +88,7 @@ graph LR
     subgraph PROCESS ["⚙️ Layer 3 — Processing"]
         P1["🔍 Informatica IDMC <br/> DQ Engine"]
         P2["📚 Collibra Data <br/>Intelligence Cloud"]
-        P3["🐍 Python DQ Engine<br/><i>·dq_engine.py <br/> · data_profiler.py</i>"]
+        P3["🐍 Python DQ Engine<br/><i>dq_engine.py · app.py</i>"]
     end
     subgraph PUBLISH ["📤 Layer 4 — Publication"]
         PB1["🇨🇦 Statistics Canada CODR"]
@@ -163,11 +165,12 @@ Each rule includes: SQL logic, severity classification, CDE mapping, remediation
 | Metric | Value |
 |--------|-------|
 | **Overall DQ Score** | **99.45%** |
-| Overall Grade | B |
+| Overall Grade | A |
 | Total Records | 10,800 |
 | Total Rules Executed | 15 |
 | Rules PASS / WARN / FAIL | 9 / 6 / 0 |
 | Total Rule Failures | 884 |
+| Clean Records | 93.0% (751 unique records affected) |
 | Completeness Score | 98.44% (B) |
 | Validity Score | 99.56% (A) |
 | Uniqueness Score | 100.00% (A) |
@@ -182,14 +185,6 @@ The DQ engine doesn't just flag failures — it diagnoses them:
 - **DQ-002 (Negative Housing Starts):** Traced to manual data entry errors in source municipal building permit systems. 307 records affected across all 10 provinces, with QC (37), AB (35), and NS (35) having the highest counts.
 - **DQ-004 (Negative Average Price):** Traced to a sign-flip error during CPI adjustment in the CMHC Housing Price Survey pipeline. 117 records affected, distributed across all dwelling types.
 - **DQ-001 & DQ-003 (NULL values):** 203 and 134 null records respectively — flagged for steward review and back-fill from source systems, not auto-remediated.
-
----
-
-## 📊 Interactive Dashboard
-
-| Tool | Description |
-|------|-------------|
-| [🏠 **CMHC DQ Dashboard**](https://cmhc-housing-data-governance-zaslgtkfkxi5n5agrz87th.streamlit.app) | Live Streamlit app — executive scorecard, all 15 DQ rules, explore 884 exceptions, upload your own dataset |
 
 ---
 
@@ -233,14 +228,10 @@ cmhc-housing-data-governance/
 │
 ├── docs/
 │   ├── dq_rules_sql.sql                             # All 15 DQ rules as executable SQL
-│   ├── dq_execution_report.html                     # HTML report (live: link above)
-│   ├── data_profile_report.html                     # HTML report (live: link above)
 │   ├── data_lineage_diagram.mermaid                 # Mermaid source for lineage diagram
 │   └── data_lineage_diagram.png                     # Static PNG export
 │
-├── dq_engine.py            # DQ rules execution engine (runs 15 rules, remediates, generates report)
-├── data_profiler.py         # Automated data profiling (column stats, domain validation, duplicates)
-├── report_generator.py      # Centralized HTML report generator
+├── dq_engine.py            # DQ rules execution engine (15 rules, remediation, scorecard outputs)
 ├── app.py                   # Streamlit interactive DQ dashboard (4 tabs)
 ├── requirements.txt         # Python dependencies
 └── README.md
@@ -252,7 +243,8 @@ cmhc-housing-data-governance/
 
 | Tool | How It's Used |
 |------|---------------|
-| **Python (pandas, numpy)** | Data profiling, DQ rule execution, scorecard calculation, report generation |
+| **Python (pandas, numpy)** | DQ rule execution, scorecard calculation, data profiling |
+| **Streamlit + Plotly** | Interactive DQ dashboard — executive scorecard, exception explorer, live rule validation |
 | **SQL** | All 15 DQ rules written as executable SQL — same pattern used for Informatica IDMC rule validation at CMHC |
 | **Collibra** | Metadata catalog structure, business glossary, stewardship workflows, and governance roles in this project follow the same patterns used in Collibra Data Intelligence Cloud at CMHC |
 | **Informatica IDMC** | DQ rule design, exception management, and severity/remediation patterns in this project mirror the IDMC rule engine workflows validated during the CMHC internship |
@@ -280,25 +272,20 @@ cd cmhc-housing-data-governance
 # Install dependencies
 pip install -r requirements.txt
 
-# Run the Data Profiler (column stats, domain validation, HTML report)
-python data_profiler.py
-
-# Run the DQ Engine (15 rules, remediation, scorecard, HTML report)
+# Run the DQ Engine (15 rules, remediation, scorecard outputs)
 python dq_engine.py
-
-# (Optional) Regenerate both HTML reports from saved CSVs
-python report_generator.py
 
 # Launch the interactive Streamlit dashboard
 streamlit run app.py
 ```
 
-**Outputs:**
-- `docs/dq_execution_report.html` — DQ rules execution report ([view live](https://rkdhakal.github.io/cmhc-housing-data-governance/docs/dq_execution_report.html))
-- `docs/data_profile_report.html` — Data profiling report ([view live](https://rkdhakal.github.io/cmhc-housing-data-governance/docs/data_profile_report.html))
+**Outputs after running `dq_engine.py`:**
 - `data/processed/cmhc_housing_starts_remediated.csv` — Cleaned dataset with DQ flags
 - `data/processed/dq_exceptions.csv` — Record-level exception log
-- Interactive dashboard at `http://localhost:8501` (run `streamlit run app.py`)
+- `scorecard/dq_execution_scorecard.csv` — Rule-level results
+- `scorecard/dq_scorecard_summary.csv` — Overall scorecard with grade
+
+**Dashboard available at** `http://localhost:8501`
 
 ---
 
@@ -323,4 +310,3 @@ Data Governance & Quality Analyst | Toronto, ON
 📧 [dramkrishna19@gmail.com](mailto:dramkrishna19@gmail.com)  
 🔗 [linkedin.com/in/ramkrishnadhakal](https://linkedin.com/in/ramkrishnadhakal)  
 💻 [github.com/rkdhakal](https://github.com/rkdhakal)
-

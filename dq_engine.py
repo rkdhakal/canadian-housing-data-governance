@@ -23,13 +23,12 @@ import pandas as pd
 import numpy as np
 import os
 from datetime import datetime
-from report_generator import generate_dq_execution_report
 
 # ── HOW TO RUN ────────────────────────────────────────────────
 # python dq_engine.py
 # Output: data/processed/cmhc_housing_starts_remediated.csv
 #         data/processed/dq_exceptions.csv
-#         docs/dq_execution_report.html
+#         scorecard/dq_execution_scorecard.csv
 
 # ── CONFIGURATION ─────────────────────────────────────────────────────────────
 DATASET_PATH     = "data/raw/cmhc_housing_starts_2018_2023.csv"
@@ -546,7 +545,6 @@ if __name__ == "__main__":
     df_clean                  = remediate_data(df, df_results)
     scorecard_stats           = build_scorecard(df_results, df_clean)
     save_outputs(df_clean, df_results, df_exceptions, scorecard_stats)
-    generate_dq_execution_report(df_results, scorecard_stats, rca)
 
     print("\n" + "=" * 65)
     print("  ✅ DQ Engine execution complete!")
@@ -554,5 +552,6 @@ if __name__ == "__main__":
     print(f"  Clean Records     : {scorecard_stats['clean_records']:,} / {scorecard_stats['total']:,}")
     print(f"  Exceptions logged : data/processed/dq_exceptions.csv")
     print(f"  Clean dataset     : data/processed/cmhc_housing_starts_remediated.csv")
-    print(f"  HTML Report       : docs/dq_execution_report.html")
+    print(f"  Scorecard         : scorecard/dq_execution_scorecard.csv")
+    print(f"  Dashboard         : streamlit run app.py")
     print("=" * 65)
