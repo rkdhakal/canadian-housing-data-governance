@@ -600,13 +600,13 @@ def tab_executive():
     col_left, col_right = st.columns([3, 2])
 
     with col_left:
-        st.plotly_chart(dim_bar_chart(dim_df), use_container_width=True)
+        st.plotly_chart(dim_bar_chart(dim_df), use_container_width=True, key="tab1_dim_bar")
 
     with col_right:
-        st.plotly_chart(status_donut(n_pass, n_warn, n_fail), use_container_width=True)
+        st.plotly_chart(status_donut(n_pass, n_warn, n_fail), use_container_width=True, key="tab1_donut")
 
     # ── Rule bar chart ──
-    st.plotly_chart(rule_bar_chart(scorecard), use_container_width=True)
+    st.plotly_chart(rule_bar_chart(scorecard), use_container_width=True, key="tab1_rule_bar")
 
     # ── Recommended action callout ──
     if recommended and recommended.lower() not in ("nan", "none", ""):
@@ -782,7 +782,7 @@ def tab_exceptions():
                 height=300, margin=dict(l=10, r=10, t=40, b=10),
                 coloraxis_showscale=False,
             )
-            st.plotly_chart(fig_geo, use_container_width=True)
+            st.plotly_chart(fig_geo, use_container_width=True, key="tab3_geo_bar")
         else:
             st.info("No geographic data to display.")
 
@@ -803,7 +803,7 @@ def tab_exceptions():
                 height=300, margin=dict(l=10, r=10, t=40, b=60),
                 coloraxis_showscale=False, xaxis_tickangle=-30,
             )
-            st.plotly_chart(fig_dwl, use_container_width=True)
+            st.plotly_chart(fig_dwl, use_container_width=True, key="tab3_dwl_bar")
         else:
             st.info("No dwelling type data to display.")
 
@@ -921,6 +921,7 @@ def tab_run_your_data():
         st.plotly_chart(
             dim_bar_from_dict(summary_dict["dim_scores"]),
             use_container_width=True,
+            key="tab4_dim_bar",
         )
     with col_r:
         st.plotly_chart(
@@ -930,9 +931,10 @@ def tab_run_your_data():
                 summary_dict["n_fail"],
             ),
             use_container_width=True,
+            key="tab4_donut",
         )
 
-    st.plotly_chart(rule_bar_chart(result_scorecard), use_container_width=True)
+    st.plotly_chart(rule_bar_chart(result_scorecard), use_container_width=True, key="tab4_rule_bar")
 
     # ── Rule detail table ──
     st.markdown('<p class="section-heading">Rule-Level Results</p>', unsafe_allow_html=True)
