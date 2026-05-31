@@ -419,13 +419,14 @@ def dim_bar_chart(dim_df: pd.DataFrame) -> go.Figure:
     )
     fig.add_vline(x=99, line_dash="dot", line_color="#1a7a4a")
     fig.add_vline(x=95, line_dash="dot", line_color="#b8860b")
+    # Stagger vertically so the two labels don't overlap
     fig.add_annotation(
-        x=99, y=1.08, yref="paper", text="99% target",
-        showarrow=False, font=dict(color="#1a7a4a", size=11), xanchor="center",
+        x=99, y=1.13, yref="paper", text="99% target",
+        showarrow=False, font=dict(color="#1a7a4a", size=10), xanchor="center",
     )
     fig.add_annotation(
-        x=95, y=1.08, yref="paper", text="95% warn",
-        showarrow=False, font=dict(color="#b8860b", size=11), xanchor="center",
+        x=95, y=1.04, yref="paper", text="95% warn",
+        showarrow=False, font=dict(color="#b8860b", size=10), xanchor="center",
     )
     fig.update_layout(
         title="DQ Dimension Scores",
@@ -435,7 +436,7 @@ def dim_bar_chart(dim_df: pd.DataFrame) -> go.Figure:
         paper_bgcolor="white",
         font=dict(family="Arial", size=13),
         height=340,
-        margin=dict(l=20, r=90, t=50, b=20),
+        margin=dict(l=20, r=90, t=60, b=20),
     )
     return fig
 
@@ -461,12 +462,19 @@ def rule_bar_chart(scorecard_df: pd.DataFrame) -> go.Figure:
             ),
         )
     )
-    fig.add_hline(y=99, line_dash="dot", line_color="#1a7a4a",
-                  annotation_text="99% target", annotation_position="top right",
-                  annotation_font=dict(color="#1a7a4a"))
-    fig.add_hline(y=95, line_dash="dot", line_color="#b8860b",
-                  annotation_text="95% warn", annotation_position="bottom right",
-                  annotation_font=dict(color="#b8860b"))
+    fig.add_hline(y=99, line_dash="dot", line_color="#1a7a4a")
+    fig.add_hline(y=95, line_dash="dot", line_color="#b8860b")
+    # yanchor="bottom" floats text above the 99 line; yanchor="top" floats below the 95 line
+    fig.add_annotation(
+        x=1.01, xref="paper", y=99, yref="y",
+        text="99% target", showarrow=False,
+        font=dict(color="#1a7a4a", size=10), xanchor="left", yanchor="bottom",
+    )
+    fig.add_annotation(
+        x=1.01, xref="paper", y=95, yref="y",
+        text="95% warn", showarrow=False,
+        font=dict(color="#b8860b", size=10), xanchor="left", yanchor="top",
+    )
     fig.update_layout(
         title="Pass Rate per DQ Rule",
         xaxis=dict(title="Rule ID", tickangle=-30),
