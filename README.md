@@ -161,7 +161,27 @@ graph LR
 
 Each rule includes: SQL logic, severity classification, CDE mapping, remediation guidance, and root cause documentation for failures.
 
-### 5. DQ Scorecard
+### 5. Data Contract
+
+A YAML-based producer-consumer data contract (`contracts/cmhc_housing_starts.yaml`) defines the formal obligations of this dataset:
+
+| Section | What it defines |
+|---|---|
+| `info` | Dataset identity, owner, contact |
+| `servers` | File path, format, delimiter |
+| `terms` | Usage restrictions, licence (Open Government Licence – Canada), notice period |
+| `schema` | All 16 fields — type, nullability, valid values, CDE flag for the 6 critical fields |
+| `quality.tiers` | Tier 1 (CDEs): 99% warn / 97% critical · Tier 2 (supporting fields): 97% warn / 95% critical |
+| `quality.rules` | All 15 DQ rules mapped to fields, dimensions, and tier thresholds |
+| `serviceLevel` | Monthly update frequency, 7-year retention, 30-day latency SLA |
+
+A standalone validation script (`contracts/validate_contract.py`) checks the dataset against the contract across 6 dimensions — schema, required fields, valid values, numeric ranges, date formats, and SLA thresholds — and exits with a clear PASS / WARN / FAIL report.
+
+```bash
+python contracts/validate_contract.py
+```
+
+### 6. DQ Scorecard
 
 | Metric | Value |
 |--------|-------|
@@ -214,6 +234,10 @@ cmhc-housing-data-governance/
 │   ├── roles_and_responsibilities.csv               # 6 governance roles with RACI matrix
 │   ├── issue_escalation_matrix.csv                  # 4-level severity escalation framework
 │   └── stewardship_assignments.csv                  # CDE-level owner/steward/custodian assignments
+│
+├── contracts/
+│   ├── cmhc_housing_starts.yaml                     # Data contract (schema, SLA thresholds, terms, tier system)
+│   └── validate_contract.py                         # Standalone contract validator (6 check categories)
 │
 ├── dq_rules/
 │   └── dq_rules_catalog.csv                         # 15 DQ rules (SQL logic, pass rates, severity)
@@ -275,6 +299,9 @@ pip install -r requirements.txt
 
 # Run the DQ Engine (15 rules, remediation, scorecard outputs)
 python dq_engine.py
+
+# Validate dataset against the data contract
+python contracts/validate_contract.py
 
 # Launch the interactive Streamlit dashboard
 streamlit run app.py
