@@ -7,6 +7,8 @@
 **Dataset:** CMHC Housing Starts — Canada (2018–2023) | 10,800 records · 16 columns · 10 provinces  
 **Live Dashboard:** [Interactive DQ Dashboard](https://cmhc-housing-data-governance-zaslgtkfkxi5n5agrz87th.streamlit.app)
 
+> ⚠️ **Independent personal portfolio project.** Not affiliated with, endorsed by, or representing Canada Mortgage and Housing Corporation (CMHC). It runs on a **synthetic dataset modeled after** CMHC's public housing starts data — see [Dataset Note](#-dataset-note) for details. It applies governance patterns I learned during my CMHC internship, built independently on my own time.
+
 ---
 
 ## 🎯 Why This Project Exists
@@ -199,7 +201,7 @@ python contracts/validate_contract.py
 | Consistency Score | 100.00% (A) |
 | **CDEs Requiring Remediation** | HOUSING_STARTS, AVERAGE_PRICE_CAD |
 
-### 6. Root Cause Analysis
+### 7. Root Cause Analysis
 
 The DQ engine doesn't just flag failures — it diagnoses them:
 
