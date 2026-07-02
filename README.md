@@ -52,7 +52,7 @@ It is designed to demonstrate the **full governance lifecycle** as practiced in 
 
 ---
 
-## 📸 Data Lineage Diagram
+## 📸 Data Lineage Diagram, Documentation
 
 > 5-layer source-to-consumption lineage with CDE tracking
 
