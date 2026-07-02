@@ -3,7 +3,7 @@
 **An end-to-end data governance and data quality framework applied to Canadian housing data — demonstrating metadata cataloging, data lineage, stewardship, DQ rule execution, and quality scorecards.**
 
 **Author:** Ram Krishna Dhakal  
-**Tools:** Python · SQL · Collibra · Informatica IDMC  
+**Tools:** Python · SQL · Streamlit · Plotly — patterns modelled on Informatica IDMC & Collibra  
 **Dataset:** Synthetic — modelled on CMHC Housing Starts, Canada (2018–2023) | 10,800 records · 16 columns · 10 provinces  
 **Live Dashboard:** [Interactive DQ Dashboard](https://cmhc-housing-data-governance-zaslgtkfkxi5n5agrz87th.streamlit.app)
 
@@ -50,7 +50,7 @@ It is designed to demonstrate the **full governance lifecycle** as practiced in 
 
 ---
 
-## 📸 Data Lineage Diagram, Documentation
+## 📸 Data Lineage Diagram & Documentation
 
 > 5-layer source-to-consumption lineage with CDE tracking
 
@@ -203,8 +203,8 @@ python contracts/validate_contract.py
 
 The DQ engine doesn't just flag failures — it diagnoses them. (Root causes below are **illustrative** — they explain the errors intentionally seeded in the synthetic dataset, demonstrating the RCA workflow.)
 
-- **DQ-002 (Negative Housing Starts):** Illustrative root cause — manual data-entry errors in source municipal permit systems. 307 records affected across all 10 provinces, with QC (37), AB (35), and NS (35) having the highest counts.
-- **DQ-004 (Negative Average Price):** Illustrative root cause — a sign-flip error during CPI adjustment in the price survey pipeline. 117 records affected, distributed across all dwelling types.
+- **DQ-002 (Negative Housing Starts):** Manual data-entry errors in source municipal permit systems. 307 records affected across all 10 provinces, with QC (37), AB (35), and NS (35) having the highest counts.
+- **DQ-004 (Negative Average Price):** A sign-flip error during CPI adjustment in the price survey pipeline. 117 records affected, distributed across all dwelling types.
 - **DQ-001 & DQ-003 (NULL values):** 203 and 134 null records respectively — flagged for steward review and back-fill from source systems, not auto-remediated.
 
 ---
@@ -271,8 +271,8 @@ canadian-housing-data-governance/
 | **Python (pandas, numpy)** | DQ rule execution, scorecard calculation, data profiling |
 | **Streamlit + Plotly** | Interactive DQ dashboard — executive scorecard, exception explorer, live rule validation |
 | **SQL** | All 15 DQ rules written as executable SQL — the same pattern enterprise DQ platforms use for rule validation |
-| **Collibra** | Metadata catalog structure, business glossary, stewardship workflows, and governance roles in this project follow the patterns used in enterprise governance platforms like Collibra Data Intelligence Cloud |
-| **Informatica IDMC** | DQ rule design, exception management, and severity/remediation patterns in this project mirror the workflows of enterprise DQ rule engines like Informatica IDMC |
+| **Collibra** *(pattern reference)* | Metadata catalog structure, business glossary, stewardship workflows, and governance roles in this project follow the patterns used in enterprise governance platforms like Collibra Data Intelligence Cloud |
+| **Informatica IDMC** *(pattern reference)* | DQ rule design, exception management, and severity/remediation patterns in this project mirror the workflows of enterprise DQ rule engines like Informatica IDMC |
 | **CSV / Excel-ready outputs** | All governance artifacts are exportable to Power BI dashboards or importable into enterprise catalog platforms |
 
 ---
