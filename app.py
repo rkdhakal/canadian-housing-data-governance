@@ -122,7 +122,7 @@ REQUIRED_COLUMNS = [
     "INTENDED_MARKET", "HOUSING_STARTS", "AVERAGE_PRICE_CAD",
 ]
 
-GITHUB_REPO    = "https://github.com/rkdhakal/cmhc-housing-data-governance"
+GITHUB_REPO    = "https://github.com/rkdhakal/canadian-housing-data-governance"
 STREAMLIT_URL  = "https://cmhc-housing-data-governance-zaslgtkfkxi5n5agrz87th.streamlit.app"
 
 # ── Data loaders ──────────────────────────────────────────────────────────────

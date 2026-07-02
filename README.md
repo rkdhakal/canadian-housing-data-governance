@@ -212,7 +212,7 @@ The DQ engine doesn't just flag failures — it diagnoses them. (Root causes bel
 ## 📁 Project Structure
 
 ```
-cmhc-housing-data-governance/
+canadian-housing-data-governance/
 │
 ├── data/
 │   ├── raw/
@@ -291,8 +291,8 @@ This project uses a **synthetic dataset** modelled after CMHC public housing sta
 
 ```bash
 # Clone the repository
-git clone https://github.com/rkdhakal/cmhc-housing-data-governance.git
-cd cmhc-housing-data-governance
+git clone https://github.com/rkdhakal/canadian-housing-data-governance.git
+cd canadian-housing-data-governance
 
 # Install dependencies
 pip install -r requirements.txt
