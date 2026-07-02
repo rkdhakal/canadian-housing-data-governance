@@ -1,7 +1,7 @@
 Column_Name,Business_Name,CDE_Justification,DQ_Dimension,Data_Owner
-REF_DATE,Reference Date,Core temporal dimension used in all trend analysis and regulatory reporting.,"Completeness, Validity",CMHC Analytics
-GEO,Geographic Area Name,Primary geographic dimension. Required for all provincial reporting and policy decisions.,"Validity, Consistency",CMHC Analytics
+REF_DATE,Reference Date,Core temporal dimension used in all trend analysis and regulatory reporting.,"Completeness, Validity",Housing Market Analytics Team
+GEO,Geographic Area Name,Primary geographic dimension. Required for all provincial reporting and policy decisions.,"Validity, Consistency",Housing Market Analytics Team
 DWELLING_TYPE,Dwelling Type,"Drives housing affordability analysis, policy segmentation, and infrastructure planning.","Validity, Completeness",Housing Market Analytics Team
 INTENDED_MARKET,Intended Market,Key dimension for rental vs. ownership market analysis. Used in federal housing affordability reports.,Validity,Housing Market Analytics Team
-HOUSING_STARTS,Number of Housing Starts,"Primary KPI for housing supply measurement. Used in GDP reporting, policy assessment, and federal funding allocation.","Completeness, Validity, Accuracy","Chief Data Officer, CMHC"
-AVERAGE_PRICE_CAD,Average Unit Price (CAD),Core affordability metric. Drives CMHC mortgage insurance eligibility thresholds and federal housing benefit calculations.,"Completeness, Validity, Accuracy","Chief Data Officer, CMHC"
+HOUSING_STARTS,Number of Housing Starts,"Primary KPI for housing supply measurement. Used in GDP reporting, policy assessment, and federal funding allocation.","Completeness, Validity, Accuracy",Chief Data Officer
+AVERAGE_PRICE_CAD,Average Unit Price (CAD),Core affordability metric. Drives mortgage insurance eligibility thresholds and federal housing benefit calculations.,"Completeness, Validity, Accuracy",Chief Data Officer

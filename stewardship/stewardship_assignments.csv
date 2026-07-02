@@ -1,7 +1,7 @@
 Dataset,CDE,Data_Owner,Data_Steward,Data_Custodian,Review_Cycle,Last_Review,DQ_Threshold_Acceptable,Current_DQ_Status
-cmhc_housing_starts_2018_2023,HOUSING_STARTS,VP Housing Market Analytics,"Senior DQ Analyst, Housing Market Analytics","Enterprise Data Engineer, IT",Monthly,2024-01-15,"< 1% null, 0% negative",Requires remediation (see DQ scorecard)
-cmhc_housing_starts_2018_2023,AVERAGE_PRICE_CAD,VP Housing Market Analytics,"Senior DQ Analyst, Housing Market Analytics","Enterprise Data Engineer, IT",Monthly,2024-01-15,"< 2% null, 0% negative",Requires remediation (see DQ scorecard)
-cmhc_housing_starts_2018_2023,GEO / GEO_CODE,VP Housing Market Analytics,"Senior DQ Analyst, Housing Market Analytics","Enterprise Data Engineer, IT",Quarterly,2024-01-15,0% invalid values,Compliant
-cmhc_housing_starts_2018_2023,REF_DATE,VP Housing Market Analytics,"Senior DQ Analyst, Housing Market Analytics","Enterprise Data Engineer, IT",Monthly,2024-01-15,"0% null, 0% invalid format",Compliant
-cmhc_housing_starts_2018_2023,DWELLING_TYPE,VP Housing Market Analytics,"Senior DQ Analyst, Housing Market Analytics","Enterprise Data Engineer, IT",Quarterly,2024-01-15,0% invalid domain values,Compliant
-cmhc_housing_starts_2018_2023,INTENDED_MARKET,VP Housing Market Analytics,"Senior DQ Analyst, Housing Market Analytics","Enterprise Data Engineer, IT",Quarterly,2024-01-15,0% invalid domain values,Compliant
+cmhc_housing_starts_2018_2023,HOUSING_STARTS,VP Housing Market Analytics,"Senior DQ Analyst, Housing Market Analytics","Enterprise Data Engineer, IT",Monthly,2026-07-02,"< 1% null, 0% negative",Requires remediation (see DQ scorecard)
+cmhc_housing_starts_2018_2023,AVERAGE_PRICE_CAD,VP Housing Market Analytics,"Senior DQ Analyst, Housing Market Analytics","Enterprise Data Engineer, IT",Monthly,2026-07-02,"< 2% null, 0% negative",Requires remediation (see DQ scorecard)
+cmhc_housing_starts_2018_2023,GEO / GEO_CODE,VP Housing Market Analytics,"Senior DQ Analyst, Housing Market Analytics","Enterprise Data Engineer, IT",Quarterly,2026-07-02,0% invalid values,Compliant
+cmhc_housing_starts_2018_2023,REF_DATE,VP Housing Market Analytics,"Senior DQ Analyst, Housing Market Analytics","Enterprise Data Engineer, IT",Monthly,2026-07-02,"0% null, 0% invalid format",Compliant
+cmhc_housing_starts_2018_2023,DWELLING_TYPE,VP Housing Market Analytics,"Senior DQ Analyst, Housing Market Analytics","Enterprise Data Engineer, IT",Quarterly,2026-07-02,0% invalid domain values,Compliant
+cmhc_housing_starts_2018_2023,INTENDED_MARKET,VP Housing Market Analytics,"Senior DQ Analyst, Housing Market Analytics","Enterprise Data Engineer, IT",Quarterly,2026-07-02,0% invalid domain values,Compliant

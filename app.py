@@ -8,7 +8,7 @@ from datetime import datetime
 
 # ── Page config ──────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="CMHC Housing DQ Dashboard",
+    page_title="Housing DQ Dashboard",
     page_icon="🏠",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -18,7 +18,7 @@ st.set_page_config(
 st.markdown(
     """
     <style>
-    /* CMHC colour palette */
+    /* Dashboard colour palette */
     :root {
         --cmhc-dark:  #1F4E79;
         --cmhc-mid:   #2E75B6;
@@ -530,7 +530,7 @@ def render_sidebar():
 
     st.sidebar.markdown(
         f"""
-        <h2 style="color:#1F4E79;margin-bottom:2px;">🏠 CMHC DQ Dashboard</h2>
+        <h2 style="color:#1F4E79;margin-bottom:2px;">🏠 Housing DQ Dashboard</h2>
         <p style="color:#2E75B6;font-size:0.85rem;margin-top:0;">
             Data Governance Portfolio Project
         </p>
@@ -540,7 +540,7 @@ def render_sidebar():
     )
 
     st.sidebar.markdown("**Author:** Ram Krishna Dhakal")
-    st.sidebar.markdown("**Dataset:** CMHC Housing Starts")
+    st.sidebar.markdown("**Dataset:** CMHC-format Housing Starts (synthetic)")
     st.sidebar.markdown("**Records:** 10,800 | **Years:** 2018–2023")
     st.sidebar.markdown("**Coverage:** 10 provinces")
     st.sidebar.markdown(f"**Last DQ Run:** `{scorecard_date}`")
@@ -551,7 +551,7 @@ def render_sidebar():
     with st.sidebar.expander("ℹ️ About this project"):
         st.write(
             "This dashboard presents a Canadian housing data quality framework "
-            "built on CMHC Housing Starts data (2018–2023). "
+            "built on synthetic CMHC-format Housing Starts data (2018–2023). "
             "Fifteen DQ rules spanning five ISO-aligned dimensions "
             "(Completeness, Validity, Accuracy, Consistency, Uniqueness) "
             "are applied to surface data quality issues and guide remediation. "
@@ -868,7 +868,7 @@ def tab_run_your_data():
     st.markdown("---")
 
     uploaded = st.file_uploader(
-        "Upload a CSV file with CMHC Housing Starts data",
+        "Upload a CSV file in the CMHC Housing Starts format",
         type=["csv"],
         help=(
             f"Required columns: {', '.join(REQUIRED_COLUMNS)}"

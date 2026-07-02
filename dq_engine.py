@@ -1,13 +1,14 @@
 """
 =============================================================
-CMHC Housing Data Governance Project
+Canadian Housing Data Governance Project (independent portfolio project)
 Script: dq_engine.py
 Author: Ram Krishna Dhakal
 Purpose: Data Quality Rules Execution Engine
-         Runs all 15 DQ rules against the CMHC housing dataset,
+         Runs all 15 DQ rules against the synthetic CMHC-format housing dataset,
          flags failed records, writes exception files, and
          produces a clean remediated output dataset.
-         Mirrors Informatica IDMC rule execution workflow.
+         Mirrors the rule execution workflow of enterprise DQ platforms
+         such as Informatica IDMC.
 
          Rules coverage:
            Completeness  — DQ-001, DQ-003
@@ -283,7 +284,7 @@ def run_dq_rules(df):
         "AVERAGE_PRICE_CAD must be between $100,000 and $3,000,000 and not exceed mean + 3 std dev for its province.",
         "High",
         mask_014,
-        "Escalate to Data Steward. Verify against CMHC price survey raw data for the affected province and period."
+        "Escalate to Data Steward. Verify against price survey source data for the affected province and period."
     )
 
     # ── DQ-015: GEO and GEO_CODE consistency ──────────────────────────────────
@@ -535,7 +536,7 @@ def save_outputs(df_clean, df_results, df_exceptions, scorecard_stats):
 # ── MAIN ──────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     print("=" * 65)
-    print("  CMHC Housing DQ Rules Execution Engine  (v2 — 15 rules)")
+    print("  Housing DQ Rules Execution Engine  (v2 — 15 rules)")
     print("  Author: Ram Krishna Dhakal")
     print("=" * 65)
 

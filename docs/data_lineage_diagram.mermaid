@@ -3,74 +3,57 @@ graph LR
     %% ── LAYER 1: SOURCE SYSTEMS ──────────────────────────────
     subgraph SOURCE ["🏗️ Layer 1 — Source Systems"]
         S1["🏛️ Municipal Building<br/>Permit Offices<br/><i>Raw permit applications<br/>from developers & contractors</i>"]
-        S2["📋 CMHC Field<br/>Surveyor Network<br/><i>Monthly direct surveys<br/>of builders & developers</i>"]
-        S3["💰 CMHC Housing<br/>Price Survey<br/><i>Transaction-level price data<br/>per dwelling type & region</i>"]
+        S2["📋 Field Surveyor<br/>Network<br/><i>Monthly direct surveys<br/>of builders & developers</i>"]
+        S3["💰 Housing<br/>Price Survey<br/><i>Transaction-level price data<br/>per dwelling type & region</i>"]
     end
 
     %% ── LAYER 2: INGESTION ───────────────────────────────────
     subgraph INGEST ["📥 Layer 2 — Ingestion"]
-        I1["🗄️ CMHC HMIP<br/><i>Housing Market Info Portal</i><br/>Oracle Database<br/><i>Deduplication · Standardization<br/>· Consolidation</i>"]
+        I1["🗄️ Housing Market<br/>Data Portal<br/><i>Deduplication · Standardization<br/>· Consolidation</i>"]
     end
 
     %% ── LAYER 3: PROCESSING ──────────────────────────────────
     subgraph PROCESS ["⚙️ Layer 3 — Processing"]
-        P1["🔍 Informatica IDMC<br/>DQ Engine<br/><i>12 DQ Rules: Completeness ·<br/>Validity · Uniqueness<br/>Exception Log · DQ Scorecard</i>"]
-        P2["📚 Collibra Data<br/>Intelligence Cloud<br/><i>Metadata Catalog · CDE Docs<br/>Data Lineage · Stewardship<br/>Workflows</i>"]
-        P3["🐍 Python DQ Engine<br/><i>dq_engine.py · data_profiler.py<br/>report_generator.py<br/>Mirrors IDMC workflow</i>"]
+        P1["🔍 Enterprise DQ Platform<br/><i>(e.g. Informatica IDMC)</i><br/><i>DQ Rules · Exception Log<br/>· DQ Scorecard</i>"]
+        P2["📚 Governance Catalog<br/><i>(e.g. Collibra)</i><br/><i>Metadata Catalog · CDE Docs<br/>Data Lineage · Stewardship</i>"]
+        P3["🐍 Python DQ Engine<br/><i>dq_engine.py · app.py</i><br/><i>15 DQ Rules · Remediation<br/>· Streamlit Dashboard</i>"]
     end
 
     %% ── LAYER 4: PUBLICATION ─────────────────────────────────
     subgraph PUBLISH ["📤 Layer 4 — Publication"]
-        PB1["🇨🇦 Statistics Canada<br/>CODR Repository<br/><i>Public Open Data<br/>CSV · JSON · SDMX<br/>Monthly Release</i>"]
+        PB1["🌐 Public Open Data Repository<br/><i>(e.g. StatCan CODR)</i>"]
     end
 
     %% ── LAYER 5: CONSUMPTION ─────────────────────────────────
     subgraph CONSUME ["📊 Layer 5 — Consumption"]
-        C1["📈 Power BI Dashboard<br/><i>Housing Starts KPIs<br/>Provincial Trends</i>"]
-        C2["🏛️ Federal Housing<br/>Policy Reports<br/><i>Treasury Board ·<br/>Minister of Housing</i>"]
-        C3["🔬 Data Science &<br/>Analytics Teams<br/><i>Ad-hoc Analysis ·<br/>ML Models</i>"]
-        C4["🌐 Public / Open<br/>Data Consumers<br/><i>Researchers · Journalists<br/>· Real Estate Industry</i>"]
+        C1["📈 Power BI Dashboard"]
+        C2["🏛️ Federal Policy Reports"]
+        C3["🔬 Data Science Teams"]
+        C4["🌐 Public / Open Data"]
     end
 
-    %% ── ARROWS: SOURCE → INGEST ──────────────────────────────
     S1 -->|"Permit records"| I1
     S2 -->|"Survey data"| I1
     S3 -->|"Price data"| I1
-
-    %% ── ARROWS: INGEST → PROCESSING ─────────────────────────
     I1 -->|"Staged data"| P1
     I1 -->|"Metadata"| P2
     I1 -->|"Raw records"| P3
-
-    %% ── ARROWS: WITHIN PROCESSING ────────────────────────────
     P1 -->|"Validated assets"| P2
     P1 -->|"Rule results"| P3
-
-    %% ── ARROWS: PROCESSING → PUBLISH ─────────────────────────
     P1 -->|"DQ-validated data"| PB1
     P2 -->|"Approved metadata"| PB1
-
-    %% ── ARROWS: PUBLISH → CONSUME ────────────────────────────
     PB1 -->|"Monthly feed"| C1
     PB1 -->|"Annual data"| C2
     PB1 -->|"API / CSV"| C3
     PB1 -->|"Open data"| C4
 
-    %% ── STYLING ──────────────────────────────────────────────
-    classDef source fill:#1F4E79,stroke:#1a3d5c,color:#fff,stroke-width:2px
-    classDef ingest fill:#2E75B6,stroke:#245d91,color:#fff,stroke-width:2px
-    classDef process fill:#C55A11,stroke:#9e480e,color:#fff,stroke-width:2px
-    classDef publish fill:#538135,stroke:#42672a,color:#fff,stroke-width:2px
-    classDef consume fill:#7030A0,stroke:#5a2680,color:#fff,stroke-width:2px
-
+    classDef source fill:#1F4E79,stroke:#1a3d5c,color:#fff
+    classDef ingest fill:#2E75B6,stroke:#245d91,color:#fff
+    classDef process fill:#C55A11,stroke:#9e480e,color:#fff
+    classDef publish fill:#538135,stroke:#42672a,color:#fff
+    classDef consume fill:#7030A0,stroke:#5a2680,color:#fff
     class S1,S2,S3 source
     class I1 ingest
     class P1,P2,P3 process
     class PB1 publish
     class C1,C2,C3,C4 consume
-
-    style SOURCE fill:#e8eef4,stroke:#1F4E79,stroke-width:2px,color:#1F4E79
-    style INGEST fill:#e8f0f7,stroke:#2E75B6,stroke-width:2px,color:#2E75B6
-    style PROCESS fill:#fdf0e6,stroke:#C55A11,stroke-width:2px,color:#C55A11
-    style PUBLISH fill:#ecf3e8,stroke:#538135,stroke-width:2px,color:#538135
-    style CONSUME fill:#f0e8f7,stroke:#7030A0,stroke-width:2px,color:#7030A0

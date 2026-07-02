@@ -1,5 +1,5 @@
 ﻿-- ============================================================
--- CMHC HOUSING DATA GOVERNANCE PROJECT
+-- CANADIAN HOUSING DATA GOVERNANCE PROJECT (INDEPENDENT PORTFOLIO PROJECT)
 -- Data Quality Rules — SQL Implementation
 -- Author: Ram Krishna Dhakal
 -- Dataset: cmhc_housing_starts_2018_2023

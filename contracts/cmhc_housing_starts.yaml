@@ -4,12 +4,13 @@ info:
   title: CMHC Housing Starts — Canada (2018–2023)
   version: 1.0.0
   description: >
-    Monthly housing starts data across Canadian provinces by dwelling type
-    and intended market. Sourced from the CMHC Housing Market Information
-    Portal. Feeds federal GDP reporting, mortgage insurance thresholds, and
-    provincial housing policy decisions.
+    Synthetic monthly housing starts data across Canadian provinces by
+    dwelling type and intended market, modelled after CMHC's public housing
+    starts releases (Statistics Canada Table 34-10-0143-01). The real-world
+    equivalent feeds federal GDP reporting, mortgage insurance thresholds,
+    and provincial housing policy decisions.
   owner: Housing Market Analytics Team
-  dataOfficer: Chief Data Officer, CMHC
+  dataOfficer: Chief Data Officer
   contact:
     name: Data Governance Office
     email: dramkrishna19@gmail.com
@@ -24,7 +25,7 @@ servers:
 terms:
   usage: >
     For housing policy analysis, federal reporting, and research purposes only.
-    Not to be used for commercial mortgage origination without CMHC approval.
+    Not to be used for commercial mortgage origination without the data owner's approval.
   limitations: >
     Dataset covers 10 Canadian provinces only. Territories (NT, YT, NU) are
     valid domain values but not present in this extract.

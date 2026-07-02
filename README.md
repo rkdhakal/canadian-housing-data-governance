@@ -4,10 +4,10 @@
 
 **Author:** Ram Krishna Dhakal  
 **Tools:** Python · SQL · Collibra · Informatica IDMC  
-**Dataset:** CMHC Housing Starts — Canada (2018–2023) | 10,800 records · 16 columns · 10 provinces  
+**Dataset:** Synthetic — modelled on CMHC Housing Starts, Canada (2018–2023) | 10,800 records · 16 columns · 10 provinces  
 **Live Dashboard:** [Interactive DQ Dashboard](https://cmhc-housing-data-governance-zaslgtkfkxi5n5agrz87th.streamlit.app)
 
-> ⚠️ **Independent personal portfolio project.** Not affiliated with, endorsed by, or representing Canada Mortgage and Housing Corporation (CMHC). It runs on a **synthetic dataset modeled after** CMHC's public housing starts data — see [Dataset Note](#-dataset-note) for details. It applies governance patterns I learned during my CMHC internship, built independently on my own time.
+> ⚠️ **Independent personal portfolio project.** Not affiliated with, endorsed by, or representing Canada Mortgage and Housing Corporation (CMHC). It runs on a **synthetic dataset modeled after** CMHC's public housing starts data — see [Dataset Note](#-dataset-note) for details. It applies governance patterns I learned during my CMHC internship, built independently on my own time. All system names, team structures, data owners, and incident narratives in the governance artifacts are **illustrative** — they model a typical enterprise data environment and do not describe any organization's internal systems or processes.
 
 ---
 
@@ -15,9 +15,7 @@
 
 Canada Mortgage and Housing Corporation (CMHC) publishes housing starts data that directly feeds into federal GDP reporting, mortgage insurance thresholds, affordable housing funding allocation, and provincial policy decisions. When this data has quality issues — missing values, invalid entries, inconsistent records across systems — the downstream consequences affect billions of dollars in policy decisions.
 
-During my **Data Quality Analyst internship at CMHC (Sept–Dec 2025)**, I worked within their established data management program using **Informatica IDMC**, **Collibra**, and **Databricks SQL** to build and validate data quality rules, perform root cause analysis, document data assets in the enterprise catalog, and collaborate with data stewards across multiple domains.
-
-**This project applies those same enterprise governance patterns** — metadata cataloging, CDE identification, data lineage, stewardship frameworks, DQ rule design, and quality scorecards — to a publicly available housing dataset, implemented using open-source tools (Python and SQL) instead of licensed enterprise platforms.
+**This project demonstrates standard enterprise governance patterns** — metadata cataloging, CDE identification, data lineage, stewardship frameworks, DQ rule design, and quality scorecards — applied end-to-end to a synthetic housing dataset, implemented with open-source tools (Python and SQL) instead of licensed platforms such as Informatica IDMC or Collibra.
 
 It is designed to demonstrate the **full governance lifecycle** as practiced in a real enterprise environment:
 
@@ -30,12 +28,12 @@ It is designed to demonstrate the **full governance lifecycle** as practiced in 
 | What was done | Why it matters |
 |---|---|
 | Identified **884 data quality exceptions** across 2 Critical Data Elements (751 unique records) | These are the exact records that would produce incorrect housing starts reports and policy metrics if left undetected |
-| Built **15 executable DQ rules** with SQL logic across completeness, validity, uniqueness, accuracy, and consistency dimensions | Replicates the rule design and validation workflow used in Informatica IDMC — same dimensions, same severity levels, same escalation logic |
+| Built **15 executable DQ rules** with SQL logic across completeness, validity, uniqueness, accuracy, and consistency dimensions | Follows the industry-standard rule design and validation workflow used by enterprise DQ platforms such as Informatica IDMC — DQ dimensions, severity classification, and escalation logic |
 | Documented **complete 5-layer end-to-end lineage** from source permit offices to federal policy reports | Enables audit traceability — a regulator or data steward can trace any number in a published report back to its source system |
 | Identified **6 Critical Data Elements** with business justification and column-level lineage | CDEs are the foundation of any governance program — knowing which fields matter most determines where you invest DQ effort |
 | Established a **stewardship operating model** with RACI matrix and 4-level escalation framework | This is the people and process layer that most portfolio projects skip — governance isn't just rules, it's accountability |
 | Produced **catalog artifacts compatible with Collibra Data Intelligence Cloud** | The CSV-based catalog, glossary, and stewardship files can be directly imported into enterprise governance platforms |
-| Built an **interactive Streamlit DQ dashboard** with live scorecard, exception explorer, and custom dataset validation | Replicates the governance reporting and steward review workflow used in IDMC and Collibra |
+| Built an **interactive Streamlit DQ dashboard** with live scorecard, exception explorer, and custom dataset validation | Mirrors the governance reporting and steward review workflows found in enterprise DQ and catalog platforms |
 
 ---
 
@@ -67,7 +65,7 @@ It is designed to demonstrate the **full governance lifecycle** as practiced in 
 - **16 columns fully documented** with business name, data type, description, valid values, and governance metadata
 - **6 Critical Data Elements (CDEs)** identified with business justification:
   - `HOUSING_STARTS` — Primary KPI; used in federal GDP reporting and funding allocation
-  - `AVERAGE_PRICE_CAD` — Core affordability metric; drives CMHC mortgage insurance thresholds
+  - `AVERAGE_PRICE_CAD` — Core affordability metric; drives mortgage insurance thresholds
   - `REF_DATE` — Core temporal dimension; required for all trend analysis
   - `GEO` — Primary geographic dimension; provincial policy reporting
   - `DWELLING_TYPE` — Housing policy segmentation
@@ -82,19 +80,19 @@ It is designed to demonstrate the **full governance lifecycle** as practiced in 
 graph LR
     subgraph SOURCE ["🏗️ Layer 1 — Source"]
         S1["🏛️ Municipal Building<br/>Permit Offices"]
-        S2["📋 CMHC Field<br/>Surveyor Network"]
-        S3["💰 CMHC Housing<br/>Price Survey"]
+        S2["📋 Field Surveyor<br/>Network"]
+        S3["💰 Housing<br/>Price Survey"]
     end
     subgraph INGEST ["📥 Layer 2 — Ingestion"]
-        I1["🗄️ CMHC HMIP<br/><i>Housing Market Info Portal</i>"]
+        I1["🗄️ Housing Market<br/>Data Portal"]
     end
     subgraph PROCESS ["⚙️ Layer 3 — Processing"]
-        P1["🔍 Informatica IDMC <br/> DQ Engine"]
-        P2["📚 Collibra Data <br/>Intelligence Cloud"]
+        P1["🔍 Enterprise DQ Platform<br/><i>(e.g. Informatica IDMC)</i>"]
+        P2["📚 Governance Catalog<br/><i>(e.g. Collibra)</i>"]
         P3["🐍 Python DQ Engine<br/><i>dq_engine.py · app.py</i>"]
     end
     subgraph PUBLISH ["📤 Layer 4 — Publication"]
-        PB1["🇨🇦 Statistics Canada CODR"]
+        PB1["🌐 Public Open Data Repository<br/><i>(e.g. StatCan CODR)</i>"]
     end
     subgraph CONSUME ["📊 Layer 5 — Consumption"]
         C1["📈 Power BI Dashboard"]
@@ -203,10 +201,10 @@ python contracts/validate_contract.py
 
 ### 7. Root Cause Analysis
 
-The DQ engine doesn't just flag failures — it diagnoses them:
+The DQ engine doesn't just flag failures — it diagnoses them. (Root causes below are **illustrative** — they explain the errors intentionally seeded in the synthetic dataset, demonstrating the RCA workflow.)
 
-- **DQ-002 (Negative Housing Starts):** Traced to manual data entry errors in source municipal building permit systems. 307 records affected across all 10 provinces, with QC (37), AB (35), and NS (35) having the highest counts.
-- **DQ-004 (Negative Average Price):** Traced to a sign-flip error during CPI adjustment in the CMHC Housing Price Survey pipeline. 117 records affected, distributed across all dwelling types.
+- **DQ-002 (Negative Housing Starts):** Illustrative root cause — manual data-entry errors in source municipal permit systems. 307 records affected across all 10 provinces, with QC (37), AB (35), and NS (35) having the highest counts.
+- **DQ-004 (Negative Average Price):** Illustrative root cause — a sign-flip error during CPI adjustment in the price survey pipeline. 117 records affected, distributed across all dwelling types.
 - **DQ-001 & DQ-003 (NULL values):** 203 and 134 null records respectively — flagged for steward review and back-fill from source systems, not auto-remediated.
 
 ---
@@ -272,9 +270,9 @@ cmhc-housing-data-governance/
 |------|---------------|
 | **Python (pandas, numpy)** | DQ rule execution, scorecard calculation, data profiling |
 | **Streamlit + Plotly** | Interactive DQ dashboard — executive scorecard, exception explorer, live rule validation |
-| **SQL** | All 15 DQ rules written as executable SQL — same pattern used for Informatica IDMC rule validation at CMHC |
-| **Collibra** | Metadata catalog structure, business glossary, stewardship workflows, and governance roles in this project follow the same patterns used in Collibra Data Intelligence Cloud at CMHC |
-| **Informatica IDMC** | DQ rule design, exception management, and severity/remediation patterns in this project mirror the IDMC rule engine workflows validated during the CMHC internship |
+| **SQL** | All 15 DQ rules written as executable SQL — the same pattern enterprise DQ platforms use for rule validation |
+| **Collibra** | Metadata catalog structure, business glossary, stewardship workflows, and governance roles in this project follow the patterns used in enterprise governance platforms like Collibra Data Intelligence Cloud |
+| **Informatica IDMC** | DQ rule design, exception management, and severity/remediation patterns in this project mirror the workflows of enterprise DQ rule engines like Informatica IDMC |
 | **CSV / Excel-ready outputs** | All governance artifacts are exportable to Power BI dashboards or importable into enterprise catalog platforms |
 
 ---
@@ -323,7 +321,7 @@ streamlit run app.py
 
 This project demonstrates governance patterns. In a real enterprise implementation, I would add:
 
-- **Automated scheduling** — Run dq_engine.py on a monthly schedule via Airflow or Azure Data Factory, triggered when new CMHC data arrives, rather than executing manually against a static CSV
+- **Automated scheduling** — Run dq_engine.py on a monthly schedule via Airflow or Azure Data Factory, triggered when new source data arrives, rather than executing manually against a static CSV
 - **Live Collibra integration** — Push DQ scores, rule results, and exception counts directly into Collibra via REST API after each run, so the catalog reflects current data quality without manual CSV imports
 - **DQ trend monitoring** — Append each scorecard run to a history table and plot scores over time in the dashboard, so stewards can see whether quality is improving, degrading, or stable across months
 - **Incident management integration** — Route FAIL and WARN exceptions automatically into ServiceNow or Jira with rule ID, severity, CDE, and assigned steward — replacing the current manual escalation step with a tracked, SLA-bound workflow
