@@ -59,6 +59,9 @@ schema:
         - New Brunswick
         - Prince Edward Island
         - Newfoundland and Labrador
+        - Northwest Territories
+        - Yukon
+        - Nunavut
       classification: Public
       criticalDataElement: true
 
@@ -97,6 +100,7 @@ schema:
       type: number
       required: false
       minimum: 0
+      maximum: 99999
       description: Number of housing units where construction has begun
       classification: Public
       criticalDataElement: true
@@ -113,39 +117,71 @@ schema:
     - name: DATA_SOURCE
       type: string
       required: true
+      description: Primary data collection program or survey that produced this record
+      validValues:
+        - CMHC Housing Market Survey
+        - Administrative Data
+        - Statistics Canada Census
 
     - name: REPORTING_AGENCY
       type: string
       required: true
+      description: Government agency responsible for collecting and reporting this data
+      validValues:
+        - Canada Mortgage and Housing Corporation
+        - Statistics Canada
 
     - name: LAST_UPDATED
       type: string
+      format: "YYYY-MM-DD"
       required: true
+      description: Date the record was last updated or revised in the source system
 
     - name: SURVEY_METHOD
       type: string
-      required: true
+      required: false
+      description: Methodology used to collect or estimate the data for this record
+      validValues:
+        - Direct Survey
+        - Administrative Data
+        - Modelled Estimate
 
     - name: GEOGRAPHY_TYPE
       type: string
       required: true
+      description: Level of geographic aggregation for this record
+      validValues:
+        - Province/Territory
+        - Census Metropolitan Area
+        - Canada
 
     - name: UOM
       type: string
       required: true
+      description: Unit of measurement applied to the HOUSING_STARTS value
+      validValues:
+        - Units
+        - Thousands of Units
 
     - name: SCALAR_FACTOR
       type: string
       required: true
+      description: Multiplier applied to HOUSING_STARTS to obtain the actual count
+      validValues:
+        - units
+        - thousands
 
     - name: STATUS
       type: string
       required: false
+      description: "Quality status indicator: blank (final), E (estimated), F (suppressed), r (revised)"
       validValues: [E, F, r]
 
     - name: DECIMALS
       type: integer
       required: true
+      description: Number of decimal places recommended for displaying HOUSING_STARTS values
+      validValues: [0, 1, 2]
 
 quality:
   type: SLA
@@ -156,7 +192,10 @@ quality:
       fields: [REF_DATE, GEO, GEO_CODE, DWELLING_TYPE, INTENDED_MARKET, HOUSING_STARTS, AVERAGE_PRICE_CAD]
       warnThreshold: 99.0
       criticalThreshold: 97.0
-      description: Highest governance priority — failures escalate to Data Steward within 24 hours
+      description: >
+        Highest governance priority — failures escalate to Data Steward within
+        24 hours. Covers the 6 CDEs plus GEO_CODE, the join key that pairs with
+        the GEO critical data element.
     tier2:
       label: Supporting Fields
       fields: [DATA_SOURCE, REPORTING_AGENCY, LAST_UPDATED, SURVEY_METHOD, GEOGRAPHY_TYPE, UOM, SCALAR_FACTOR, STATUS, DECIMALS]
@@ -269,7 +308,7 @@ quality:
       field: HOUSING_STARTS
       dimension: accuracy
       tier: 1
-      warnThreshold: 99.0
+      warnThreshold: 100.0
       criticalThreshold: 97.0
     - ruleId: DQ-014
       field: AVERAGE_PRICE_CAD

@@ -229,7 +229,7 @@ cmhc-housing-data-governance/
 │   └── critical_data_elements.csv                   # 6 CDEs with business justification
 │
 ├── lineage/
-│   ├── system_lineage.csv                           # End-to-end system lineage (5 layers, 8 nodes)
+│   ├── system_lineage.csv                           # End-to-end system lineage (5 layers, 12 nodes)
 │   └── cde_column_lineage.csv                       # Column-level lineage for all 6 CDEs
 │
 ├── stewardship/
