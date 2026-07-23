@@ -1,0 +1,17 @@
+Dataset,Column_Name,Sensitivity_Tier,PII,Data_Category,Classification_Rationale
+cmhc_housing_starts_2018_2023,REF_DATE,Public,No,Temporal,Published reference period of the housing starts release; no sensitivity.
+cmhc_housing_starts_2018_2023,GEO,Public,No,Geographic,Published provincial geography; open government data.
+cmhc_housing_starts_2018_2023,GEO_CODE,Public,No,Geographic,Standard published two-letter province code; open government data.
+cmhc_housing_starts_2018_2023,DWELLING_TYPE,Public,No,Classification,Published housing structure category; no sensitivity.
+cmhc_housing_starts_2018_2023,INTENDED_MARKET,Public,No,Classification,Published market segment (ownership/rental); no sensitivity.
+cmhc_housing_starts_2018_2023,HOUSING_STARTS,Public,No,Statistical Measure,Published headline housing supply statistic released as open data.
+cmhc_housing_starts_2018_2023,AVERAGE_PRICE_CAD,Internal,No,Financial,"Average unit price feeds mortgage insurance eligibility thresholds (OSFI B-20, indirect). Restricted to internal roles pending official release; exact values are not published at this grain."
+cmhc_housing_starts_2018_2023,DATA_SOURCE,Public,No,Metadata,Descriptive lineage metadata identifying the collection program; no sensitivity.
+cmhc_housing_starts_2018_2023,REPORTING_AGENCY,Public,No,Metadata,Descriptive metadata naming the reporting agency; no sensitivity.
+cmhc_housing_starts_2018_2023,LAST_UPDATED,Public,No,Temporal / Audit,System-generated revision date; no sensitivity.
+cmhc_housing_starts_2018_2023,SURVEY_METHOD,Public,No,Methodology,Describes collection methodology; published alongside the statistic.
+cmhc_housing_starts_2018_2023,GEOGRAPHY_TYPE,Public,No,Geographic,Level of geographic aggregation; descriptive only.
+cmhc_housing_starts_2018_2023,UOM,Public,No,Reference,Unit of measure reference value; no sensitivity.
+cmhc_housing_starts_2018_2023,SCALAR_FACTOR,Public,No,Reference,Scalar multiplier reference value; no sensitivity.
+cmhc_housing_starts_2018_2023,STATUS,Public,No,Data Quality Metadata,Standard published quality/suppression indicator; no sensitivity.
+cmhc_housing_starts_2018_2023,DECIMALS,Public,No,Display,Display formatting reference value; no sensitivity.
