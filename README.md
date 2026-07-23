@@ -207,6 +207,15 @@ The DQ engine doesn't just flag failures — it diagnoses them. (Root causes bel
 - **DQ-004 (Negative Average Price):** A sign-flip error during CPI adjustment in the price survey pipeline. 117 records affected, distributed across all dwelling types.
 - **DQ-001 & DQ-003 (NULL values):** 203 and 134 null records respectively — flagged for steward review and back-fill from source systems, not auto-remediated.
 
+### 8. Governance & DAMA-DMBOK Alignment
+
+The project is mapped to the **DAMA-DMBOK2** data management framework and scored for maturity across all 11 knowledge areas, with Data Governance at the hub. The assessment records current vs. target maturity, the evidence behind each score, the gaps, and the improvement initiative that closes each one.
+
+![DAMA-DMBOK maturity radar chart — current vs target](governance/dama_maturity_chart.png)
+
+- **Assessment:** [`governance/dama_alignment.csv`](governance/dama_alignment.csv) — all 11 areas scored 1–5
+- **Narrative & roadmap:** [`governance/README.md`](governance/README.md) — what the wheel is, how to read the scores, and the three improvement workstreams (Security · Scalability & Integration · AI Governance)
+
 ---
 
 ## 📁 Project Structure
@@ -255,6 +264,12 @@ canadian-housing-data-governance/
 │   ├── dq_rules_sql.sql                             # All 15 DQ rules as executable SQL
 │   ├── data_lineage_diagram.mermaid                 # Mermaid source for lineage diagram
 │   └── data_lineage_diagram.png                     # Static PNG export
+│
+├── governance/
+│   ├── dama_alignment.csv                           # DAMA-DMBOK maturity assessment (11 areas)
+│   ├── dama_maturity_chart.py                       # Generates the maturity radar chart from the CSV
+│   ├── dama_maturity_chart.png                      # Radar chart — current vs target maturity
+│   └── README.md                                    # DAMA alignment narrative & improvement roadmap
 │
 ├── dq_engine.py            # DQ rules execution engine (15 rules, remediation, scorecard outputs)
 ├── app.py                   # Streamlit interactive DQ dashboard (4 tabs)

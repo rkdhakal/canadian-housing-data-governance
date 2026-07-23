@@ -37,6 +37,8 @@ Each knowledge area is scored on a CMMI(Capability Maturity Model Integration)-s
 
 ## Snapshot: strengths and gaps
 
+![DAMA-DMBOK maturity radar chart comparing current versus target maturity across the scored knowledge areas](dama_maturity_chart.png)
+
 - **Strong (Defined–Managed):** Data Quality (4), and Metadata, Data Governance, and Data Warehousing & BI (3) — the analyst-facing core of the project.
 - **Emerging (2):** Data Architecture, Data Modeling & Design, and Reference & Master Data.
 - **Early stage (Initial, 1):** Data Security, Data Integration & Interoperability, and Data Storage & Operations — the areas the roadmap below targets.
