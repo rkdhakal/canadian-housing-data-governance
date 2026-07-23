@@ -24,6 +24,7 @@ import sys
 import math
 import hashlib
 import pandas as pd
+from datetime import datetime
 
 # Fix Windows console encoding so status symbols print safely.
 sys.stdout.reconfigure(encoding="utf-8")
@@ -40,9 +41,15 @@ CLASSIFICATION_PATH = os.path.join(HERE, "data_classification.csv")
 MASKING_POLICY_PATH = os.path.join(HERE, "masking_policy.csv")
 RAW_DATA_PATH       = os.path.join(ROOT, "data", "raw", "cmhc_housing_starts_2018_2023.csv")
 SAMPLE_SENSITIVE_PATH = os.path.join(HERE, "sample_sensitive_records.csv")
+AUDIT_LOG_PATH        = os.path.join(HERE, "access_audit_log.csv")
 
 DEFAULT_DATASET  = "cmhc_housing_starts_2018_2023"
 SAMPLE_DATASET   = "sample_sensitive_records"
+
+# Identity recorded in the audit log. This demo has no authentication, so the
+# ROLE is the meaningful signal. With real authentication (SSO/login) this
+# becomes the authenticated username — no other change to the design.
+DEFAULT_USER = "demo-session"
 
 # Columns absent from data_classification.csv are treated as this tier.
 # "Public" keeps derived/helper columns (e.g. _rule_id, _dimension) working;
@@ -199,13 +206,56 @@ METHODS = {
 }
 
 
+# ── AUDIT LOGGING ─────────────────────────────────────────────────────────────
+AUDIT_COLUMNS = [
+    "Timestamp", "User", "Role", "Action", "Dataset", "Rows_Returned",
+    "Columns_Masked", "Columns_Denied", "Columns_Unclassified", "Export_Permitted",
+]
+
+
+def log_access(report, action="view", user=DEFAULT_USER):
+    """
+    Append one entry to the access audit log.
+
+    The log is append-only: rows are added, never modified. The file header
+    is written only when the log does not yet exist.
+
+    Note: a CSV is the demonstration store. A production deployment would
+    write to a database or append-only store (or stream to a SIEM), since a
+    file on ephemeral hosting does not survive a restart.
+    """
+    entry = {
+        "Timestamp":            datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "User":                 user,
+        "Role":                 report["role"],
+        "Action":               action,
+        "Dataset":              report["dataset"],
+        "Rows_Returned":        report["rows"],
+        "Columns_Masked":       "; ".join(report["columns_masked"]) or "none",
+        "Columns_Denied":       "; ".join(report["columns_denied"]) or "none",
+        "Columns_Unclassified": "; ".join(report["columns_unclassified"]) or "none",
+        "Export_Permitted":     report["export_permitted"],
+    }
+
+    write_header = not os.path.exists(AUDIT_LOG_PATH)
+    pd.DataFrame([entry], columns=AUDIT_COLUMNS).to_csv(
+        AUDIT_LOG_PATH, mode="a", header=write_header, index=False
+    )
+    return entry
+
+
 # ── MAIN API ──────────────────────────────────────────────────────────────────
-def apply_masking(df, role, dataset=DEFAULT_DATASET):
+def apply_masking(df, role, dataset=DEFAULT_DATASET,
+                  action="view", user=DEFAULT_USER, audit=True):
     """
     Apply role-based masking to a dataframe.
 
     Returns (masked_dataframe, report) where report describes what the
-    engine did — used by the access audit log.
+    engine did.
+
+    Auditing is on by default and happens inside this function, so masking
+    and logging cannot be separated — every access is recorded by
+    construction. Pass audit=False only for tests.
     """
     matrix = load_access_matrix()
     if role not in matrix:
@@ -247,6 +297,9 @@ def apply_masking(df, role, dataset=DEFAULT_DATASET):
             func = METHODS.get(str(method).strip(), mask_redact)
             out[column] = func(out[column], param)
             report["columns_masked"].append(f"{column} ({method})")
+
+    if audit:
+        log_access(report, action=action, user=user)
 
     return out, report
 
@@ -298,3 +351,14 @@ if __name__ == "__main__":
         "Synthetic fixture. APPLICANT_NAME/APPLICANT_EMAIL are Confidential (PII); "
         "ESTIMATED_VALUE_CAD is Internal.",
     )
+
+    # ── The audit trail these accesses just produced ───────────────────────────
+    if os.path.exists(AUDIT_LOG_PATH):
+        log = pd.read_csv(AUDIT_LOG_PATH)
+        shown = ["Timestamp", "Role", "Dataset", "Columns_Masked", "Columns_Denied"]
+        print("=" * 72)
+        print(f"  ACCESS AUDIT LOG — {len(log)} total entries (showing the last 8)")
+        print(f"  Full detail: {os.path.basename(AUDIT_LOG_PATH)}")
+        print("=" * 72)
+        print(log[shown].tail(8).to_string(index=False))
+        print()
