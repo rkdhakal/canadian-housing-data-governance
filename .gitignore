@@ -2,3 +2,6 @@ __pycache__/
 *.pyc
 .venv/
 venv/
+
+# Access audit log — runtime artifact, not source (rotated, regenerated on each run)
+security/access_audit_log.csv

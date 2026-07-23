@@ -27,7 +27,10 @@ import pandas as pd
 from datetime import datetime
 
 # Fix Windows console encoding so status symbols print safely.
-sys.stdout.reconfigure(encoding="utf-8")
+# Guarded because Streamlit replaces sys.stdout with an object that has no
+# .reconfigure() — without this check, importing the engine would crash the app.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
 
 # ── HOW TO RUN ────────────────────────────────────────────────
 # python security/masking_engine.py
@@ -50,6 +53,11 @@ SAMPLE_DATASET   = "sample_sensitive_records"
 # ROLE is the meaningful signal. With real authentication (SSO/login) this
 # becomes the authenticated username — no other change to the design.
 DEFAULT_USER = "demo-session"
+
+# Audit log retention policy: keep only the most recent N entries (rotation),
+# so the log can never grow unbounded. Production systems apply the same idea
+# with time-based retention in a database or SIEM.
+MAX_AUDIT_ROWS = 1000
 
 # Columns absent from data_classification.csv are treated as this tier.
 # "Public" keeps derived/helper columns (e.g. _rule_id, _dimension) working;
@@ -241,6 +249,16 @@ def log_access(report, action="view", user=DEFAULT_USER):
     pd.DataFrame([entry], columns=AUDIT_COLUMNS).to_csv(
         AUDIT_LOG_PATH, mode="a", header=write_header, index=False
     )
+
+    # Enforce the retention cap: if the log has grown past MAX_AUDIT_ROWS,
+    # rewrite it keeping only the most recent entries.
+    try:
+        log_df = pd.read_csv(AUDIT_LOG_PATH)
+        if len(log_df) > MAX_AUDIT_ROWS:
+            log_df.tail(MAX_AUDIT_ROWS).to_csv(AUDIT_LOG_PATH, index=False)
+    except Exception:
+        pass  # never let audit housekeeping interrupt a data access
+
     return entry
 
 

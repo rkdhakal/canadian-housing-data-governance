@@ -1,9 +1,0 @@
-Timestamp,User,Role,Action,Dataset,Rows_Returned,Columns_Masked,Columns_Denied,Columns_Unclassified,Export_Permitted
-2026-07-23 13:06:35,demo-session,Data Owner,view,cmhc_housing_starts_2018_2023,5,none,none,none,Yes
-2026-07-23 13:06:35,demo-session,Data Steward,view,cmhc_housing_starts_2018_2023,5,none,none,none,Yes
-2026-07-23 13:06:35,demo-session,Data Custodian,view,cmhc_housing_starts_2018_2023,5,AVERAGE_PRICE_CAD (band),none,none,No
-2026-07-23 13:06:35,demo-session,Data Consumer,view,cmhc_housing_starts_2018_2023,5,AVERAGE_PRICE_CAD (band),none,none,Yes
-2026-07-23 13:06:35,demo-session,Data Owner,view,sample_sensitive_records,6,none,none,none,Yes
-2026-07-23 13:06:35,demo-session,Data Steward,view,sample_sensitive_records,6,APPLICANT_NAME (hash); APPLICANT_EMAIL (partial),none,none,Yes
-2026-07-23 13:06:35,demo-session,Data Custodian,view,sample_sensitive_records,6,APPLICANT_NAME (hash); APPLICANT_EMAIL (partial); ESTIMATED_VALUE_CAD (band),none,none,No
-2026-07-23 13:06:35,demo-session,Data Consumer,view,sample_sensitive_records,6,ESTIMATED_VALUE_CAD (band),APPLICANT_NAME; APPLICANT_EMAIL,none,Yes

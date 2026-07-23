@@ -6,6 +6,19 @@ import io
 import os
 from datetime import datetime
 
+# Security framework — role-based masking engine (see security/ folder)
+from security.masking_engine import (
+    apply_masking,
+    log_access,
+    load_access_matrix,
+    AUDIT_LOG_PATH,
+    ACCESS_MATRIX_PATH,
+    CLASSIFICATION_PATH,
+    MASKING_POLICY_PATH,
+    SAMPLE_SENSITIVE_PATH,
+    SAMPLE_DATASET,
+)
+
 # ── Page config ──────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="Housing DQ Dashboard",
@@ -545,8 +558,24 @@ def render_sidebar():
     st.sidebar.markdown("**Coverage:** 10 provinces")
     st.sidebar.markdown(f"**Last DQ Run:** `{scorecard_date}`")
 
+    # ── Role selector — drives the security framework's masking ──
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("**🔒 Access Role**")
+    roles = list(load_access_matrix().keys())
+    default_index = roles.index("Data Consumer") if "Data Consumer" in roles else 0
+    selected_role = st.sidebar.selectbox(
+        "View as:",
+        roles,
+        index=default_index,
+        key="selected_role",
+        help="Data is masked according to this role's permissions in the access control matrix.",
+    )
+    st.sidebar.caption(f"Viewing with **{selected_role}** permissions.")
+
     st.sidebar.markdown("---")
     st.sidebar.markdown(f"🔗 [GitHub Repo]({GITHUB_REPO})")
+
+    return selected_role
 
     with st.sidebar.expander("ℹ️ About this project"):
         st.write(
@@ -727,7 +756,7 @@ def tab_dq_rules():
 
 # ── Tab 3 — Exception Explorer ────────────────────────────────────────────────
 
-def tab_exceptions():
+def tab_exceptions(role):
     exc_df = load_exceptions()
     if exc_df is None:
         st.error(f"Exceptions file not found: `{EXCEPTIONS_PATH}`")
@@ -823,6 +852,24 @@ def tab_exceptions():
 
     st.markdown('<p class="section-heading">Exception Records</p>', unsafe_allow_html=True)
 
+    # ── Role-based masking (real data — AVERAGE_PRICE_CAD is classified Internal) ──
+    # apply_masking defaults to the housing dataset's classification.
+    masked_exc, exc_report = apply_masking(filtered[display_cols], role, audit=False)
+
+    # Log a 'view' once per role change. Streamlit re-runs the script on every
+    # interaction, so logging each render would flood the audit trail.
+    if st.session_state.get("_last_exc_role") != role:
+        st.session_state["_last_exc_role"] = role
+        log_access(exc_report, action="view", user="streamlit-session")
+
+    if exc_report["columns_masked"]:
+        st.caption(
+            f"🔒 Viewing as **{role}** — masked for this role: "
+            f"`{'`, `'.join(exc_report['columns_masked'])}`"
+        )
+    else:
+        st.caption(f"🔓 Viewing as **{role}** — full access, no columns masked.")
+
     PAGE_SIZE = 100
     total_pages = max(1, (n_exc + PAGE_SIZE - 1) // PAGE_SIZE)
     if total_pages > 1:
@@ -834,19 +881,22 @@ def tab_exceptions():
 
     start = (page - 1) * PAGE_SIZE
     end   = start + PAGE_SIZE
-    page_df = filtered[display_cols].iloc[start:end]
+    page_df = masked_exc.iloc[start:end]
 
     st.dataframe(page_df, use_container_width=True, hide_index=True)
     st.caption(f"Showing records {start+1}–{min(end, n_exc):,} of {n_exc:,}")
 
-    # ── Download ──
-    csv_bytes = filtered[display_cols].to_csv(index=False).encode("utf-8")
-    st.download_button(
-        label="⬇️ Download exceptions as CSV",
-        data=csv_bytes,
-        file_name="dq_exceptions_filtered.csv",
-        mime="text/csv",
-    )
+    # ── Download (exports the masked view; respects the role's export permission) ──
+    if str(exc_report["export_permitted"]).strip().lower() == "yes":
+        csv_bytes = masked_exc.to_csv(index=False).encode("utf-8")
+        st.download_button(
+            label="⬇️ Download exceptions as CSV (masked for your role)",
+            data=csv_bytes,
+            file_name="dq_exceptions_filtered.csv",
+            mime="text/csv",
+        )
+    else:
+        st.warning(f"Export is not permitted for the **{role}** role.", icon="🚫")
 
 
 # ── Tab 4 — Run on Your Data ──────────────────────────────────────────────────
@@ -973,16 +1023,165 @@ def tab_run_your_data():
     )
 
 
+# ── Tab 5 — Data Security ─────────────────────────────────────────────────────
+
+def _should_audit(role: str) -> bool:
+    """
+    Log only when the selected role actually changes.
+
+    Streamlit re-runs the whole script on every interaction, so logging on
+    each render would flood the audit trail with meaningless duplicates.
+    """
+    if st.session_state.get("_last_audited_role") != role:
+        st.session_state["_last_audited_role"] = role
+        return True
+    return False
+
+
+def _decision_style(value: str) -> str:
+    colors = {"ALLOW": "#d4edda", "MASK": "#fff3cd", "DENY": "#f8d7da"}
+    return f"background-color: {colors.get(str(value).upper(), '')}"
+
+
+def tab_data_security(role: str):
+    st.markdown('<p class="section-heading">Data Security &amp; Access Control</p>',
+                unsafe_allow_html=True)
+
+    st.markdown(
+        "A **classification-driven security framework**: access and masking are governed by "
+        "configuration — a sensitivity classification, a role-to-access matrix, and a masking "
+        "policy — never hardcoded to any column. Adding a new data source requires **config, "
+        "not code**."
+    )
+
+    with st.expander("ℹ️  Design rationale — why a framework, and why sample data"):
+        st.markdown(
+            "This housing dataset is **aggregate statistics** (province × month × dwelling type × "
+            "market) and contains **no personal information** — its data dictionary classifies every "
+            "field `PII: No`, and PIPEDA does not apply.\n\n"
+            "Rather than fabricate personal data to justify a security layer, security here is built "
+            "as a **reusable framework**. It protects this dataset's one `Internal` field "
+            "(`AVERAGE_PRICE_CAD`) today, and is demonstrated below against a small, clearly-labelled "
+            "**synthetic fixture** to prove it handles `Confidential`/PII data — hashing, partial "
+            "masking, and column denial — when such sources are onboarded.\n\n"
+            "This mirrors how enterprise platforms apply one masking framework across many datasets "
+            "of differing sensitivity."
+        )
+
+    # ── Access control matrix ──
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown('<p class="section-heading">1 · Access Control Matrix</p>', unsafe_allow_html=True)
+    st.caption("Which role may see which sensitivity tier. Every decision carries a written justification.")
+
+    matrix_df = pd.read_csv(ACCESS_MATRIX_PATH)
+    tier_cols = ["Public", "Internal", "Confidential"]
+    styled_matrix = matrix_df.style.apply(
+        lambda col: [_decision_style(v) for v in col], subset=tier_cols
+    )
+    st.dataframe(styled_matrix, use_container_width=True, hide_index=True)
+
+    # ── Classification register ──
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown('<p class="section-heading">2 · Data Classification Register</p>', unsafe_allow_html=True)
+    st.caption("Every column is classified. New data sources register here — this is the scalability hook.")
+
+    class_df = pd.read_csv(CLASSIFICATION_PATH)
+    datasets = ["All"] + sorted(class_df["Dataset"].unique().tolist())
+    chosen = st.selectbox("Filter by dataset", datasets, key="sec_dataset_filter")
+    view_df = class_df if chosen == "All" else class_df[class_df["Dataset"] == chosen]
+
+    def _tier_style(value):
+        colors = {"PUBLIC": "#d4edda", "INTERNAL": "#fff3cd", "CONFIDENTIAL": "#f8d7da"}
+        return f"background-color: {colors.get(str(value).upper(), '')}"
+
+    st.dataframe(
+        view_df.style.apply(lambda col: [_tier_style(v) for v in col], subset=["Sensitivity_Tier"]),
+        use_container_width=True, hide_index=True,
+    )
+
+    # ── Live masking demonstration ──
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown('<p class="section-heading">3 · Live Masking Demonstration</p>', unsafe_allow_html=True)
+    st.info(
+        "**Synthetic demonstration fixture — not real personal data.** These records model "
+        "source-layer building permit submissions, where personal data legitimately exists before "
+        "it is stripped ahead of publication. Change **View as** in the sidebar to see the masking change.",
+        icon="🧪",
+    )
+
+    sensitive_df = pd.read_csv(SAMPLE_SENSITIVE_PATH)
+    masked_df, report = apply_masking(sensitive_df, role, dataset=SAMPLE_DATASET, audit=False)
+
+    # Audit only on an actual role change, never on every rerun.
+    if _should_audit(role):
+        log_access(report, action="view", user="streamlit-session")
+
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Viewing as", role)
+    c2.metric("Columns masked", len(report["columns_masked"]))
+    c3.metric("Columns denied", len(report["columns_denied"]))
+    c4.metric("Export permitted", report["export_permitted"])
+
+    if report["columns_masked"]:
+        st.markdown(f"**Masked:** `{'`, `'.join(report['columns_masked'])}`")
+    if report["columns_denied"]:
+        st.markdown(
+            f"**Denied (removed entirely):** `{'`, `'.join(report['columns_denied'])}` — "
+            "these columns are not present in the data below, nor in any export."
+        )
+
+    st.dataframe(masked_df, use_container_width=True, hide_index=True)
+
+    if str(report["export_permitted"]).strip().lower() == "yes":
+        st.download_button(
+            "⬇️ Download this masked view",
+            data=masked_df.to_csv(index=False).encode("utf-8"),
+            file_name=f"masked_sample_{role.replace(' ', '_').lower()}.csv",
+            mime="text/csv",
+            help="Exports exactly what you see — masking cannot be bypassed by downloading.",
+        )
+    else:
+        st.warning(f"Export is not permitted for the **{role}** role.", icon="🚫")
+
+    # ── Masking policy ──
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown('<p class="section-heading">4 · Masking Policy</p>', unsafe_allow_html=True)
+    st.caption(
+        "How each tier is masked. Wildcard (`*`) rows are tier-level defaults, so a newly classified "
+        "column is protected immediately; specific rows override them."
+    )
+    st.dataframe(pd.read_csv(MASKING_POLICY_PATH), use_container_width=True, hide_index=True)
+
+    # ── Audit trail ──
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown('<p class="section-heading">5 · Access Audit Log</p>', unsafe_allow_html=True)
+
+    if os.path.exists(AUDIT_LOG_PATH):
+        audit_df = pd.read_csv(AUDIT_LOG_PATH)
+        st.caption(f"{len(audit_df):,} recorded access events — most recent first.")
+        st.dataframe(audit_df.tail(15).iloc[::-1], use_container_width=True, hide_index=True)
+    else:
+        st.caption("No access events recorded yet.")
+
+    st.caption(
+        "⚠️ On Streamlit Community Cloud the filesystem is ephemeral, so entries written here do not "
+        "survive an app restart. A production deployment would write to a database or append-only "
+        "store. Row-level security and real authentication (SSO) are documented production patterns "
+        "not exercised in this demo."
+    )
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main():
-    render_sidebar()
+    selected_role = render_sidebar()
 
     tabs = st.tabs([
         "📊 Executive Scorecard",
         "📋 DQ Rules",
         "🔍 Exception Explorer",
         "📁 Run on Your Data",
+        "🔒 Data Security",
     ])
 
     with tabs[0]:
@@ -992,10 +1191,13 @@ def main():
         tab_dq_rules()
 
     with tabs[2]:
-        tab_exceptions()
+        tab_exceptions(selected_role)
 
     with tabs[3]:
         tab_run_your_data()
+
+    with tabs[4]:
+        tab_data_security(selected_role)
 
 
 if __name__ == "__main__":
