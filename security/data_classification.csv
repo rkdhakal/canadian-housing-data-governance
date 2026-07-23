@@ -15,3 +15,10 @@ cmhc_housing_starts_2018_2023,UOM,Public,No,Reference,Unit of measure reference 
 cmhc_housing_starts_2018_2023,SCALAR_FACTOR,Public,No,Reference,Scalar multiplier reference value; no sensitivity.
 cmhc_housing_starts_2018_2023,STATUS,Public,No,Data Quality Metadata,Standard published quality/suppression indicator; no sensitivity.
 cmhc_housing_starts_2018_2023,DECIMALS,Public,No,Display,Display formatting reference value; no sensitivity.
+sample_sensitive_records,PERMIT_ID,Public,No,Identifier,"Synthetic demonstration fixture - not real data. Municipal permit numbers are public record."
+sample_sensitive_records,GEO_CODE,Public,No,Geographic,Synthetic demonstration fixture - not real data. Published province code.
+sample_sensitive_records,DWELLING_TYPE,Public,No,Classification,Synthetic demonstration fixture - not real data. Published housing category.
+sample_sensitive_records,UNITS,Public,No,Statistical Measure,Synthetic demonstration fixture - not real data. Unit count on the permit.
+sample_sensitive_records,APPLICANT_NAME,Confidential,Yes,Personal Identifier,"Synthetic demonstration fixture - not real personal data. Models the applicant name captured on a source permit record; personal data must never reach published aggregates."
+sample_sensitive_records,APPLICANT_EMAIL,Confidential,Yes,Contact Information,"Synthetic demonstration fixture - not real personal data. Models applicant contact details captured at source; subject to data minimisation before publication."
+sample_sensitive_records,ESTIMATED_VALUE_CAD,Internal,No,Financial,"Synthetic demonstration fixture - not real data. Commercially sensitive construction value; restricted to internal roles."

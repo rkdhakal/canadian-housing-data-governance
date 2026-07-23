@@ -1,0 +1,31 @@
+PERMIT_ID,GEO_CODE,DWELLING_TYPE,UNITS,APPLICANT_NAME,APPLICANT_EMAIL,ESTIMATED_VALUE_CAD
+PRM-2021-0001,ON,Single-Detached,12,Avery Chen,avery.chen@example.ca,4250000
+PRM-2021-0002,BC,Row House,8,Jordan Patel,jordan.patel@example.ca,2980000
+PRM-2021-0003,AB,Apartment - 5+ storeys,64,Riley Tremblay,riley.tremblay@example.com,18750000
+PRM-2021-0004,QC,Semi-Detached,6,Sam Okafor,sam.okafor@example.ca,1640000
+PRM-2021-0005,NS,Single-Detached,3,Casey Nguyen,casey.nguyen@example.com,890000
+PRM-2021-0006,MB,Row House,14,Morgan Lefebvre,morgan.lefebvre@example.ca,3320000
+PRM-2021-0007,SK,Apartment - Under 5 storeys,22,Taylor Bergeron,taylor.bergeron@example.ca,5480000
+PRM-2021-0008,NB,Single-Detached,5,Quinn Doucette,quinn.doucette@example.com,1120000
+PRM-2021-0009,NL,Semi-Detached,4,Alex Whelan,alex.whelan@example.ca,970000
+PRM-2021-0010,PE,Single-Detached,2,Drew Gallant,drew.gallant@example.com,620000
+PRM-2022-0011,ON,Apartment - 5+ storeys,88,Harper Singh,harper.singh@example.ca,26400000
+PRM-2022-0012,BC,Single-Detached,9,Rowan Ferreira,rowan.ferreira@example.com,5150000
+PRM-2022-0013,AB,Row House,16,Emerson Blais,emerson.blais@example.ca,3870000
+PRM-2022-0014,QC,Apartment - Under 5 storeys,30,Charlie Lapointe,charlie.lapointe@example.ca,6740000
+PRM-2022-0015,NS,Row House,11,Reese Mackenzie,reese.mackenzie@example.com,2260000
+PRM-2022-0016,MB,Single-Detached,7,Finley Kowalski,finley.kowalski@example.ca,1580000
+PRM-2022-0017,SK,Semi-Detached,5,Sage Thibault,sage.thibault@example.com,1040000
+PRM-2022-0018,NB,Apartment - Under 5 storeys,18,Kai Robichaud,kai.robichaud@example.ca,3910000
+PRM-2022-0019,NL,Single-Detached,4,Dakota Fitzgerald,dakota.fitzgerald@example.com,830000
+PRM-2022-0020,PE,Row House,6,Skyler Arsenault,skyler.arsenault@example.ca,1290000
+PRM-2023-0021,ON,Semi-Detached,10,Phoenix Dubois,phoenix.dubois@example.ca,3460000
+PRM-2023-0022,BC,Apartment - 5+ storeys,120,Remy Kaur,remy.kaur@example.com,34200000
+PRM-2023-0023,AB,Single-Detached,15,Hayden Moreau,hayden.moreau@example.ca,6080000
+PRM-2023-0024,QC,Row House,13,Elliot Cormier,elliot.cormier@example.ca,2740000
+PRM-2023-0025,NS,Apartment - Under 5 storeys,26,Marlowe Beaulieu,marlowe.beaulieu@example.com,5630000
+PRM-2023-0026,MB,Semi-Detached,8,Jules Pelletier,jules.pelletier@example.ca,1720000
+PRM-2023-0027,SK,Single-Detached,6,Arden Sauve,arden.sauve@example.com,1350000
+PRM-2023-0028,NB,Row House,9,Sloane Comeau,sloane.comeau@example.ca,1980000
+PRM-2023-0029,NL,Apartment - Under 5 storeys,20,Wren Hickey,wren.hickey@example.com,4360000
+PRM-2023-0030,PE,Semi-Detached,3,Beckett Doiron,beckett.doiron@example.ca,740000

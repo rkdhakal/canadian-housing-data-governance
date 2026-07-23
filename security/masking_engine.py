@@ -39,8 +39,10 @@ ACCESS_MATRIX_PATH  = os.path.join(HERE, "access_control_matrix.csv")
 CLASSIFICATION_PATH = os.path.join(HERE, "data_classification.csv")
 MASKING_POLICY_PATH = os.path.join(HERE, "masking_policy.csv")
 RAW_DATA_PATH       = os.path.join(ROOT, "data", "raw", "cmhc_housing_starts_2018_2023.csv")
+SAMPLE_SENSITIVE_PATH = os.path.join(HERE, "sample_sensitive_records.csv")
 
-DEFAULT_DATASET = "cmhc_housing_starts_2018_2023"
+DEFAULT_DATASET  = "cmhc_housing_starts_2018_2023"
+SAMPLE_DATASET   = "sample_sensitive_records"
 
 # Columns absent from data_classification.csv are treated as this tier.
 # "Public" keeps derived/helper columns (e.g. _rule_id, _dimension) working;
@@ -250,21 +252,16 @@ def apply_masking(df, role, dataset=DEFAULT_DATASET):
 
 
 # ── DEMONSTRATION ─────────────────────────────────────────────────────────────
-if __name__ == "__main__":
+def _demo(title, df, dataset, roles, note=""):
+    """Print the same rows as seen by each role, for one dataset."""
     print("=" * 72)
-    print("  Data Masking Engine — role-based demonstration")
-    print("  Author: Ram Krishna Dhakal")
+    print(f"  {title}")
+    if note:
+        print(f"  {note}")
     print("=" * 72)
 
-    preview_cols = ["REF_DATE", "GEO_CODE", "DWELLING_TYPE",
-                    "HOUSING_STARTS", "AVERAGE_PRICE_CAD"]
-    sample = pd.read_csv(RAW_DATA_PATH).head(5)[preview_cols]
-
-    print(f"\n  Source : {os.path.basename(RAW_DATA_PATH)}  ({len(sample)} sample rows)")
-    print(f"  Note   : AVERAGE_PRICE_CAD is classified Internal; all other columns are Public.\n")
-
-    for role in ["Data Owner", "Data Steward", "Data Custodian", "Data Consumer"]:
-        masked, report = apply_masking(sample, role)
+    for role in roles:
+        masked, report = apply_masking(df, role, dataset=dataset)
         print("─" * 72)
         print(f"  Viewing as : {role}")
         print(f"  Masked     : {report['columns_masked'] or 'none'}")
@@ -273,3 +270,31 @@ if __name__ == "__main__":
         print("─" * 72)
         print(masked.to_string(index=False))
         print()
+
+
+if __name__ == "__main__":
+    print("\n" + "=" * 72)
+    print("  Data Masking Engine — role-based demonstration")
+    print("  Author: Ram Krishna Dhakal")
+    print("=" * 72 + "\n")
+
+    roles = ["Data Owner", "Data Steward", "Data Custodian", "Data Consumer"]
+
+    # ── Dataset 1: the housing dataset (Public columns + one Internal column) ──
+    preview_cols = ["REF_DATE", "GEO_CODE", "DWELLING_TYPE",
+                    "HOUSING_STARTS", "AVERAGE_PRICE_CAD"]
+    housing = pd.read_csv(RAW_DATA_PATH).head(5)[preview_cols]
+    _demo(
+        "DATASET 1 — cmhc_housing_starts_2018_2023  (5 sample rows)",
+        housing, DEFAULT_DATASET, roles,
+        "AVERAGE_PRICE_CAD is classified Internal; all other columns are Public.",
+    )
+
+    # ── Dataset 2: synthetic fixture exercising the Confidential tier ──────────
+    sensitive = pd.read_csv(SAMPLE_SENSITIVE_PATH)
+    _demo(
+        f"DATASET 2 — sample_sensitive_records  ({len(sensitive)} rows, showing 6)",
+        sensitive.head(6), SAMPLE_DATASET, roles,
+        "Synthetic fixture. APPLICANT_NAME/APPLICANT_EMAIL are Confidential (PII); "
+        "ESTIMATED_VALUE_CAD is Internal.",
+    )

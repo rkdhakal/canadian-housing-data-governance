@@ -3,3 +3,5 @@ Dataset,Column_Name,Sensitivity_Tier,Masking_Method,Method_Parameter,Example_Ori
 *,*,Internal,redact,,743086.78,[RESTRICTED],Default fallback for any internal column without a column-specific policy.
 *,*,Confidential,hash,sha256_8,jane.doe@example.ca,7f3a9b1c,"Default for confidential data; a one-way hash preserves distinctness for counting or joining without revealing the value."
 cmhc_housing_starts_2018_2023,AVERAGE_PRICE_CAD,Internal,band,band_width=100000,743086.78,$700K-$800K,"Column-specific override — banding keeps the price analytically useful for trend and comparison work without exposing the exact figure."
+sample_sensitive_records,APPLICANT_EMAIL,Confidential,partial,,avery.chen@example.ca,a***@example.ca,"Column-specific override — partial masking retains the domain for routing and diagnostics while hiding the individual's identity."
+sample_sensitive_records,ESTIMATED_VALUE_CAD,Internal,band,band_width=100000,4250000,"$4,200K-$4,300K","Column-specific override — banding preserves scale of construction value without revealing the commercially sensitive figure."
