@@ -39,16 +39,16 @@ Each knowledge area is scored on a CMMI(Capability Maturity Model Integration)-s
 
 ![DAMA-DMBOK maturity radar chart comparing current versus target maturity across the scored knowledge areas](dama_maturity_chart.png)
 
-- **Strong (Defined–Managed):** Data Quality (4), and Metadata, Data Governance, and Data Warehousing & BI (3) — the analyst-facing core of the project.
+- **Strong (Defined–Managed):** Data Quality (4) and Data Security (4), with Metadata, Data Governance, and Data Warehousing & BI (3) — the analyst-facing core of the project.
 - **Emerging (2):** Data Architecture, Data Modeling & Design, and Reference & Master Data.
-- **Early stage (Initial, 1):** Data Security, Data Integration & Interoperability, and Data Storage & Operations — the areas the roadmap below targets.
+- **Early stage (Initial, 1):** Data Integration & Interoperability and Data Storage & Operations — the areas Workstream 2 targets.
 - **Not applicable:** Document & Content Management (this is a structured, tabular dataset).
 
 ## Improvement roadmap
 
 The improvement initiatives group into three sequenced workstreams:
 
-1. **Workstream 1 — Data Security.** Role-based access control, data masking driven by sensitivity classification, and access auditing. Raises Data Security from 1 toward 4.
+1. **Workstream 1 — Data Security ✅ Delivered.** Classification-driven role-based access control, sensitivity-based data masking, and access auditing with a retention policy. Raised Data Security from 1 to 4 — see [`docs/data_security_policy.md`](../docs/data_security_policy.md).
 2. **Workstream 2 — Scalability & Integration.** Multi-source ingestion, storage layering and lifecycle operations, a warehouse/serving layer, a target-state architecture and data model, formalized reference data, and DQ trend monitoring. Raises Integration, Storage, Architecture, Modeling, Reference & Master Data, Metadata, and BI toward their targets.
 3. **Workstream 3 — AI Governance.** A governance policy framework and an AI governance layer aligned to the EU AI Act (Article 10 data governance for high-risk systems). Raises Data Governance from 3 toward 4.
 

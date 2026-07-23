@@ -216,6 +216,15 @@ The project is mapped to the **DAMA-DMBOK2** data management framework and score
 - **Assessment:** [`governance/dama_alignment.csv`](governance/dama_alignment.csv) — all 11 areas scored 1–5
 - **Narrative & roadmap:** [`governance/README.md`](governance/README.md) — what the wheel is, how to read the scores, and the three improvement workstreams (Security · Scalability & Integration · AI Governance)
 
+### 9. Data Security & Access Control
+
+A **classification-driven security framework** — access and masking are governed by configuration, not hardcoded to any column, so onboarding a new data source needs **config, not code**. It maps the 6 governance roles to `ALLOW` / `MASK` / `DENY` decisions across three sensitivity tiers, applies five masking methods (banding, hashing, redaction, partial, plus column denial), and records every access in a retention-capped audit log. Enforced live in the dashboard's **🔒 Data Security** tab and Exception Explorer.
+
+Because the housing data is aggregate and holds no personal data, the framework is demonstrated against a small, clearly-labelled synthetic fixture to prove it handles Confidential/PII data — a deliberate, documented design decision.
+
+- **Policy & rationale:** [`docs/data_security_policy.md`](docs/data_security_policy.md) — classification scheme, role model, masking methods, audit, and the production boundaries not implemented
+- **Framework:** [`security/`](security/) — access matrix, classification register, masking policy, engine, and audit log
+
 ---
 
 ## 📁 Project Structure
@@ -263,7 +272,8 @@ canadian-housing-data-governance/
 ├── docs/
 │   ├── dq_rules_sql.sql                             # All 15 DQ rules as executable SQL
 │   ├── data_lineage_diagram.mermaid                 # Mermaid source for lineage diagram
-│   └── data_lineage_diagram.png                     # Static PNG export
+│   ├── data_lineage_diagram.png                     # Static PNG export
+│   └── data_security_policy.md                      # Data security policy, rationale & boundaries
 │
 ├── governance/
 │   ├── dama_alignment.csv                           # DAMA-DMBOK maturity assessment (11 areas)
@@ -271,8 +281,15 @@ canadian-housing-data-governance/
 │   ├── dama_maturity_chart.png                      # Radar chart — current vs target maturity
 │   └── README.md                                    # DAMA alignment narrative & improvement roadmap
 │
+├── security/
+│   ├── access_control_matrix.csv                    # Role × sensitivity tier → ALLOW/MASK/DENY
+│   ├── data_classification.csv                      # Sensitivity tier of every column, per dataset
+│   ├── masking_policy.csv                           # Masking method per column/tier (defaults + overrides)
+│   ├── masking_engine.py                            # Classification-driven role-based masking engine
+│   └── sample_sensitive_records.csv                 # Synthetic fixture demonstrating the Confidential tier
+│
 ├── dq_engine.py            # DQ rules execution engine (15 rules, remediation, scorecard outputs)
-├── app.py                   # Streamlit interactive DQ dashboard (4 tabs)
+├── app.py                   # Streamlit interactive DQ dashboard (5 tabs, incl. Data Security)
 ├── requirements.txt         # Python dependencies
 └── README.md
 ```
