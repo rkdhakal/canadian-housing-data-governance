@@ -1,6 +1,6 @@
 Role,Access_Tier,Public,Internal,Confidential,Export_Permitted,Rationale
 Chief Data Officer (CDO),Full Access,ALLOW,ALLOW,ALLOW,Yes,Accountable for all enterprise data; requires unrestricted visibility for oversight and risk decisions.
-Data Owner,Full Access,ALLOW,ALLOW,ALLOW,Yes,Accountable for data within their business domain; approves access and accepts residual risk, so must see actual values.
+Data Owner,Full Access,ALLOW,ALLOW,ALLOW,Yes,"Accountable for data within their business domain; approves access and accepts residual risk, so must see actual values."
 Data Steward,Operational Access,ALLOW,ALLOW,MASK,Yes,Must see business values to investigate and remediate DQ exceptions; confidential fields are not required for that work.
 Data Custodian,Technical Access,ALLOW,MASK,MASK,No,Manages pipelines and storage; requires schema and volume rather than business-sensitive values (least privilege).
 Data Consumer,Restricted Access,ALLOW,MASK,DENY,Yes,Consumes published data for analysis and reporting; receives masked internal values and no confidential fields.
