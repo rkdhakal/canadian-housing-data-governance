@@ -5,3 +5,6 @@ venv/
 
 # Access audit log — runtime artifact, not source (rotated, regenerated on each run)
 security/access_audit_log.csv
+
+# DQ runner outputs — runtime artifacts, regenerated on each run
+integration/output/
