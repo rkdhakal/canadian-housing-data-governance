@@ -1,0 +1,247 @@
+# =============================================================================
+# DQ Rules — cmhc_housing_starts_2018_2023
+# =============================================================================
+# Declarative definition of the 15 data quality rules for this source.
+# Translated 1:1 from dq_engine.py — no thresholds or logic were changed.
+# Nothing executes this file yet. dq_engine.py is unaffected and still the
+# authoritative engine until the runner is built and proven equivalent.
+#
+# Each rule carries two kinds of information:
+#   - execution   : type, column(s), and the parameters that type needs
+#   - governance  : dimension, cde, severity, description, remediation
+#                   (the scorecard and exception log need these)
+#
+# Rule types used here (7):
+#   not_null | range | domain | pattern | unique
+#   statistical_range | cross_field_consistency
+#
+# Null handling is declared explicitly on every rule, because dq_engine.py
+# treats nulls differently per rule and equivalence depends on matching it:
+#   nulls: ignore -> a null cannot fail this rule (completeness rules catch it)
+#   nulls: fail   -> a null is a violation
+# =============================================================================
+
+source_id: cmhc_housing_starts_2018_2023
+rules_version: 1.0
+last_updated: 2026-07-28
+translated_from: dq_engine.py
+
+rules:
+
+  # ── Completeness ──────────────────────────────────────────────────────────
+  - id: DQ-001
+    name: Housing Starts Completeness
+    type: not_null
+    column: HOUSING_STARTS
+    dimension: Completeness
+    cde: HOUSING_STARTS
+    severity: High
+    description: "HOUSING_STARTS must not be NULL."
+    remediation: "Escalate to Data Steward. Attempt back-fill from source permit system. If unavailable, flag STATUS='F'."
+
+  - id: DQ-003
+    name: Average Price Completeness
+    type: not_null
+    column: AVERAGE_PRICE_CAD
+    # Conditional rule: suppressed records (STATUS='F') are permitted to have
+    # no price, so they are excluded before the null check runs.
+    where: "STATUS != 'F'"
+    dimension: Completeness
+    cde: AVERAGE_PRICE_CAD
+    severity: Medium
+    description: "AVERAGE_PRICE_CAD must not be NULL on non-suppressed records."
+    remediation: "Escalate to Data Steward. Re-run price survey aggregation for affected period/geography."
+
+  # ── Validity — range ──────────────────────────────────────────────────────
+  - id: DQ-002
+    name: Housing Starts Non-Negative
+    type: range
+    column: HOUSING_STARTS
+    min: 0
+    nulls: ignore
+    dimension: Validity
+    cde: HOUSING_STARTS
+    severity: Critical
+    description: "HOUSING_STARTS must be >= 0. Negative values are physically impossible."
+    remediation: "Root cause: manual data entry error in source permit system. Remediation: take absolute value and flag record for steward review."
+
+  - id: DQ-004
+    name: Average Price Non-Negative
+    type: range
+    column: AVERAGE_PRICE_CAD
+    min: 0
+    nulls: ignore
+    dimension: Validity
+    cde: AVERAGE_PRICE_CAD
+    severity: Critical
+    description: "AVERAGE_PRICE_CAD must be > 0. Negative prices are invalid."
+    remediation: "Root cause: sign-flip error during CPI adjustment. Remediation: take absolute value and reprocess through price adjustment pipeline."
+
+  - id: DQ-005
+    name: Average Price Ceiling Check
+    type: range
+    column: AVERAGE_PRICE_CAD
+    max: 2000000
+    nulls: ignore
+    dimension: Validity
+    cde: AVERAGE_PRICE_CAD
+    severity: Medium
+    description: "AVERAGE_PRICE_CAD must not exceed $2,000,000."
+    remediation: "Escalate to Data Owner for manual review. Likely data entry error or unit mismatch."
+
+  - id: DQ-011
+    name: Reference Date Not Future
+    type: range
+    column: REF_DATE
+    # Dynamic bound: resolved by the runner at execution time to YYYY-MM.
+    # Compared as a string, matching dq_engine.py.
+    max: "${current_month}"
+    compare_as: string
+    nulls: ignore
+    dimension: Validity
+    cde: REF_DATE
+    severity: Medium
+    description: "REF_DATE must not be after the current month."
+    remediation: "Remove future-dated records. Investigate source system for clock/date errors."
+
+  # ── Validity — domain ─────────────────────────────────────────────────────
+  - id: DQ-006
+    name: GEO_CODE Referential Integrity
+    type: domain
+    column: GEO_CODE
+    allowed: ["ON", "BC", "AB", "QC", "MB", "SK", "NS", "NB", "NL", "PE", "NT", "YT", "NU"]
+    nulls: fail
+    dimension: Validity
+    cde: GEO_CODE
+    severity: High
+    description: "GEO_CODE must be a valid Canadian province/territory code."
+    remediation: "Lookup correct GEO_CODE from Statistics Canada geographic reference table."
+
+  - id: DQ-007
+    name: Dwelling Type Domain Validity
+    type: domain
+    column: DWELLING_TYPE
+    allowed:
+      - "Single-Detached"
+      - "Semi-Detached"
+      - "Row House"
+      - "Apartment - 5+ storeys"
+      - "Apartment - Under 5 storeys"
+    nulls: fail
+    dimension: Validity
+    cde: DWELLING_TYPE
+    severity: High
+    description: "DWELLING_TYPE must be one of 5 approved categories."
+    remediation: "Map to nearest approved dwelling type using reference lookup table. Escalate if ambiguous."
+
+  - id: DQ-008
+    name: Intended Market Domain Validity
+    type: domain
+    column: INTENDED_MARKET
+    allowed: ["Homeowner", "Rental", "Condominium"]
+    nulls: fail
+    dimension: Validity
+    cde: INTENDED_MARKET
+    severity: High
+    description: "INTENDED_MARKET must be one of: Homeowner, Rental, Condominium."
+    remediation: "Map to approved value using permit application reference data."
+
+  - id: DQ-012
+    name: Status Code Validity
+    type: domain
+    column: STATUS
+    # Blank is a meaningful value here (it means "final"), so an empty string
+    # is in the allowed list and a null is read as blank rather than failing.
+    allowed: ["", "E", "F", "r"]
+    nulls: ignore
+    dimension: Validity
+    cde: STATUS
+    severity: Low
+    description: "STATUS must be blank, 'E', 'F', or 'r'."
+    remediation: "Map to nearest valid status code. Blank (final) is default."
+
+  # ── Validity — pattern ────────────────────────────────────────────────────
+  - id: DQ-009
+    name: Reference Date Format
+    type: pattern
+    column: REF_DATE
+    regex: "^\\d{4}-\\d{2}$"
+    nulls: fail
+    dimension: Validity
+    cde: REF_DATE
+    severity: Medium
+    description: "REF_DATE must follow YYYY-MM format."
+    remediation: "Reformat to YYYY-MM using date parsing. Reject if year or month is out of valid range."
+
+  # ── Uniqueness ────────────────────────────────────────────────────────────
+  - id: DQ-010
+    name: Grain Uniqueness
+    type: unique
+    columns: ["REF_DATE", "GEO_CODE", "DWELLING_TYPE", "INTENDED_MARKET"]
+    # flag_all: every member of a duplicate set is reported, not just the
+    # extra copies (matches keep=False in dq_engine.py).
+    flag_all: true
+    dimension: Uniqueness
+    cde: "REF_DATE+GEO_CODE+DWELLING_TYPE+INTENDED_MARKET"
+    severity: High
+    description: "Each grain combination must be unique."
+    remediation: "Identify source of duplicate load. Remove duplicate keeping most recent record. Investigate ETL pipeline."
+
+  # ── Accuracy — statistical range ──────────────────────────────────────────
+  - id: DQ-013
+    name: "Housing Starts Accuracy — Statistical Range"
+    type: statistical_range
+    column: HOUSING_STARTS
+    group_by: GEO_CODE
+    std_multiplier: 3
+    hard_max: 20000
+    nulls: ignore
+    dimension: Accuracy
+    cde: HOUSING_STARTS
+    severity: High
+    description: "HOUSING_STARTS must not exceed 20,000 or mean + 3 std dev for its province. Extreme outliers flagged for steward review."
+    remediation: "Escalate to Data Steward. Cross-reference with municipal permit office records to confirm or correct value."
+
+  - id: DQ-014
+    name: "Average Price Accuracy — Statistical Range"
+    type: statistical_range
+    column: AVERAGE_PRICE_CAD
+    group_by: GEO_CODE
+    std_multiplier: 3
+    hard_min: 100000
+    hard_max: 3000000
+    nulls: ignore
+    dimension: Accuracy
+    cde: AVERAGE_PRICE_CAD
+    severity: High
+    description: "AVERAGE_PRICE_CAD must be between $100,000 and $3,000,000 and not exceed mean + 3 std dev for its province."
+    remediation: "Escalate to Data Steward. Verify against price survey source data for the affected province and period."
+
+  # ── Consistency — cross-field ─────────────────────────────────────────────
+  - id: DQ-015
+    name: GEO and GEO_CODE Consistency
+    type: cross_field_consistency
+    source_column: GEO
+    target_column: GEO_CODE
+    # Rows whose GEO value is absent from this mapping are skipped, not failed
+    # (matches the notna() guard in dq_engine.py).
+    unmapped: skip
+    mapping:
+      Ontario: "ON"
+      British Columbia: "BC"
+      Alberta: "AB"
+      Quebec: "QC"
+      Manitoba: "MB"
+      Saskatchewan: "SK"
+      Nova Scotia: "NS"
+      New Brunswick: "NB"
+      Newfoundland and Labrador: "NL"
+      Prince Edward Island: "PE"
+      Northwest Territories: "NT"
+      Yukon: "YT"
+      Nunavut: "NU"
+    dimension: Consistency
+    cde: "GEO + GEO_CODE"
+    severity: Critical
+    description: "GEO (full province name) and GEO_CODE (2-letter code) must always refer to the same province. Any mismatch indicates a data entry or join error."
+    remediation: "Correct GEO_CODE using the authoritative GEO-to-GEO_CODE lookup table. Investigate source join logic."
