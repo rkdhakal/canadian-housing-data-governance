@@ -607,19 +607,12 @@ def tab_executive():
 
     row = summary.iloc[0]
 
-    total_records   = int(row.get("Total_Records", 0))
     n_pass          = int(row.get("Rules_PASS", 0))
     n_warn          = int(row.get("Rules_WARN", 0))
     n_fail          = int(row.get("Rules_FAIL", 0))
-    total_failures  = int(row.get("Total_Rule_Failures", 0))
     overall_score   = float(row.get("Overall_DQ_Score_Pct", 0))
     overall_grade   = str(row.get("Overall_Grade", ""))
     recommended     = str(row.get("Recommended_Action", ""))
-    # Use unique failed records (not sum of rule failures) — same method as Run on Your Data tab
-    exc_df_tmp = load_exceptions()
-    n_unique_failed = exc_df_tmp["_record_id"].nunique() if exc_df_tmp is not None and "_record_id" in exc_df_tmp.columns else total_failures
-    clean_pct = round(100 * (total_records - n_unique_failed) / total_records, 1) \
-                if total_records > 0 else 100.0
 
     # ── Metric cards ──
     st.markdown('<p class="section-heading">Overall Data Quality Metrics</p>', unsafe_allow_html=True)
@@ -628,12 +621,11 @@ def tab_executive():
         "federal report or funding decision. The score reflects the data after automated "
         "remediation; anything still flagged needs a human to review it, not a script."
     )
-    c1, c2, c3, c4, c5 = st.columns(5)
+    c1, c2, c3, c4 = st.columns(4)
     c1.metric("Overall DQ Score", f"{overall_score:.1f}%", f"Grade: {overall_grade}")
     c2.metric("Rules Passed ✅", n_pass, f"of {n_pass + n_warn + n_fail} rules")
     c3.metric("Rules Warning ⚠️", n_warn)
-    c4.metric("Total Rule Failures 🔴", f"{total_failures:,}")
-    c5.metric("Clean Records %", f"{clean_pct:.1f}%")
+    c4.metric("Rules Failing 🔴", n_fail)
 
     st.markdown("<br>", unsafe_allow_html=True)
 
@@ -981,14 +973,13 @@ def tab_run_your_data():
     st.markdown('<p class="section-heading">Your DQ Scorecard</p>', unsafe_allow_html=True)
 
     # ── Metric cards ──
-    c1, c2, c3, c4, c5 = st.columns(5)
+    c1, c2, c3, c4 = st.columns(4)
     c1.metric("Overall DQ Score",    f"{summary_dict['overall_score']:.1f}%",
               f"Grade: {summary_dict['overall_grade']}")
     c2.metric("Rules Passed ✅",      summary_dict["n_pass"],
               f"of {summary_dict['total_rules']} rules")
     c3.metric("Rules Warning ⚠️",    summary_dict["n_warn"])
-    c4.metric("Total Rule Failures 🔴", f"{summary_dict['total_failed']:,}")
-    c5.metric("Clean Records %",     f"{summary_dict['clean_pct']:.1f}%")
+    c4.metric("Rules Failing 🔴",    summary_dict["n_fail"])
 
     st.markdown("<br>", unsafe_allow_html=True)
 
