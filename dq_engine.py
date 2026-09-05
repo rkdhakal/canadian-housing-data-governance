@@ -382,6 +382,71 @@ def remediate_data(df, df_results):
     remediated += count2
     print(f"      ✓ DQ-004: {count2} negative AVERAGE_PRICE_CAD corrected (abs value applied)")
 
+    # DQ-006 / DQ-015: GEO_CODE corrected via the authoritative GEO → GEO_CODE
+    # lookup. One correction fixes both rules, since an invalid code and a
+    # code that doesn't match its GEO name trace back to the same cause.
+    correct_code  = df_clean["GEO"].map(GEO_MAPPING)
+    geo_fix_mask  = correct_code.notna() & (df_clean["GEO_CODE"] != correct_code)
+    geo_fix_count = geo_fix_mask.sum()
+    df_clean.loc[geo_fix_mask, "GEO_CODE"] = correct_code[geo_fix_mask]
+    df_clean.loc[geo_fix_mask, "_dq_flag"] = df_clean.loc[geo_fix_mask, "_dq_flag"].fillna("") + " | DQ-006/DQ-015: GEO_CODE corrected via authoritative lookup"
+    remediated += geo_fix_count
+    print(f"      ✓ DQ-006/DQ-015: {geo_fix_count} GEO_CODE values corrected via lookup")
+
+    # DQ-007: DWELLING_TYPE — fix known formatting variants, escalate the rest
+    DWELLING_TYPE_FIXES = {"Single Detached": "Single-Detached"}
+    dwelling_fix_mask  = df_clean["DWELLING_TYPE"].isin(DWELLING_TYPE_FIXES)
+    dwelling_fix_count = dwelling_fix_mask.sum()
+    df_clean.loc[dwelling_fix_mask, "DWELLING_TYPE"] = df_clean.loc[dwelling_fix_mask, "DWELLING_TYPE"].map(DWELLING_TYPE_FIXES)
+    df_clean.loc[dwelling_fix_mask, "_dq_flag"] = df_clean.loc[dwelling_fix_mask, "_dq_flag"].fillna("") + " | DQ-007: DWELLING_TYPE corrected via known-format lookup"
+    remediated += dwelling_fix_count
+    print(f"      ✓ DQ-007: {dwelling_fix_count} DWELLING_TYPE values corrected (known formatting variants)")
+
+    dwelling_ambiguous = ~df_clean["DWELLING_TYPE"].isin(VALID_DWELLING)
+    df_clean.loc[dwelling_ambiguous, "_dq_flag"] = df_clean.loc[dwelling_ambiguous, "_dq_flag"].fillna("") + " | DQ-007: Unrecognized DWELLING_TYPE flagged for steward review"
+    print(f"      ⚠ DQ-007: {dwelling_ambiguous.sum()} unrecognized DWELLING_TYPE values flagged (ambiguous, not auto-corrected)")
+
+    # DQ-008: INTENDED_MARKET — same pattern: fix known variants, escalate the rest
+    INTENDED_MARKET_FIXES = {"homeowner": "Homeowner"}
+    market_fix_mask  = df_clean["INTENDED_MARKET"].isin(INTENDED_MARKET_FIXES)
+    market_fix_count = market_fix_mask.sum()
+    df_clean.loc[market_fix_mask, "INTENDED_MARKET"] = df_clean.loc[market_fix_mask, "INTENDED_MARKET"].map(INTENDED_MARKET_FIXES)
+    df_clean.loc[market_fix_mask, "_dq_flag"] = df_clean.loc[market_fix_mask, "_dq_flag"].fillna("") + " | DQ-008: INTENDED_MARKET corrected via known-format lookup"
+    remediated += market_fix_count
+    print(f"      ✓ DQ-008: {market_fix_count} INTENDED_MARKET values corrected (known formatting variants)")
+
+    market_ambiguous = ~df_clean["INTENDED_MARKET"].isin(VALID_MARKETS)
+    df_clean.loc[market_ambiguous, "_dq_flag"] = df_clean.loc[market_ambiguous, "_dq_flag"].fillna("") + " | DQ-008: Unrecognized INTENDED_MARKET flagged for steward review"
+    print(f"      ⚠ DQ-008: {market_ambiguous.sum()} unrecognized INTENDED_MARKET values flagged (ambiguous, not auto-corrected)")
+
+    # DQ-012: STATUS — any code outside the valid set resets to blank (final),
+    # matching the rule's own documented default.
+    status_invalid_mask = ~df_clean["STATUS"].fillna("").isin(VALID_STATUS)
+    status_fix_count     = status_invalid_mask.sum()
+    df_clean.loc[status_invalid_mask, "STATUS"] = ""
+    df_clean.loc[status_invalid_mask, "_dq_flag"] = df_clean.loc[status_invalid_mask, "_dq_flag"].fillna("") + " | DQ-012: Invalid STATUS reset to blank (final)"
+    remediated += status_fix_count
+    print(f"      ✓ DQ-012: {status_fix_count} invalid STATUS codes reset to blank (documented default)")
+
+    # DQ-009: REF_DATE — reformat malformed separators (e.g. "2018/01") back to YYYY-MM
+    ref_date_bad_mask = ~df_clean["REF_DATE"].str.match(r"^\d{4}-\d{2}$")
+    ref_date_fix_count = ref_date_bad_mask.sum()
+    df_clean.loc[ref_date_bad_mask, "REF_DATE"] = df_clean.loc[ref_date_bad_mask, "REF_DATE"].str.replace("/", "-", regex=False)
+    df_clean.loc[ref_date_bad_mask, "_dq_flag"] = df_clean.loc[ref_date_bad_mask, "_dq_flag"].fillna("") + " | DQ-009: REF_DATE reformatted to YYYY-MM"
+    remediated += ref_date_fix_count
+    print(f"      ✓ DQ-009: {ref_date_fix_count} REF_DATE values reformatted to YYYY-MM")
+
+    # DQ-010: deduplicate grain keys → keep first occurrence, drop the extras.
+    # Runs LAST, after every fix above that can touch a grain column (GEO_CODE,
+    # DWELLING_TYPE, INTENDED_MARKET, REF_DATE) — otherwise a correction could
+    # create a new duplicate that this step never sees.
+    grain_cols = ["REF_DATE", "GEO_CODE", "DWELLING_TYPE", "INTENDED_MARKET"]
+    dup_mask   = df_clean.duplicated(subset=grain_cols, keep="first")
+    dup_count  = dup_mask.sum()
+    df_clean   = df_clean[~dup_mask].copy()
+    remediated += dup_count
+    print(f"      ✓ DQ-010: {dup_count} duplicate grain rows removed (kept first occurrence)")
+
     # NULL HOUSING_STARTS → flag for steward, don't auto-fill
     null_mask = df_clean["HOUSING_STARTS"].isnull()
     df_clean.loc[null_mask, "_dq_flag"] = df_clean.loc[null_mask, "_dq_flag"].fillna("") + " | DQ-001: NULL flagged for steward review"
@@ -496,6 +561,14 @@ def save_outputs(df_clean, df_results, df_exceptions, scorecard_stats):
         rows = df_results[df_results["DQ_Dimension"] == dim]["Pass_Rate_Pct"]
         return round(rows.mean(), 2) if len(rows) > 0 else None
 
+    non_passing = df_results.loc[df_results["Status"] != "PASS", "Rule_ID"].tolist()
+    recommended_action = (
+        f"Escalate {', '.join(non_passing)} to Data Steward. "
+        "Root cause analysis required for remaining nulls, outliers, and unresolved domain values."
+        if non_passing else
+        "All rules passing. No escalation required."
+    )
+
     pd.DataFrame([{
         "Dataset": "cmhc_housing_starts_2018_2023",
         "Scorecard_Date": datetime.now().strftime("%Y-%m-%d"),
@@ -510,10 +583,7 @@ def save_outputs(df_clean, df_results, df_exceptions, scorecard_stats):
         "Uniqueness_Score": _dim_score("Uniqueness"),
         "Accuracy_Score": _dim_score("Accuracy"),
         "Consistency_Score": _dim_score("Consistency"),
-        "Recommended_Action": (
-            "Escalate DQ-001, DQ-002, DQ-003, DQ-004, DQ-013, DQ-014 to Data Steward. "
-            "Root cause analysis required for negative values and statistical outliers."
-        )
+        "Recommended_Action": recommended_action
     }]).to_csv("scorecard/dq_scorecard_summary.csv", index=False)
     print(f"      ✓ Summary scorecard   → scorecard/dq_scorecard_summary.csv")
 
@@ -540,11 +610,12 @@ if __name__ == "__main__":
     print("  Author: Ram Krishna Dhakal")
     print("=" * 65)
 
-    df                        = load_data(DATASET_PATH)
-    df_results, df_exceptions = run_dq_rules(df)
-    rca                       = root_cause_analysis(df_exceptions)
-    df_clean                  = remediate_data(df, df_results)
-    scorecard_stats           = build_scorecard(df_results, df_clean)
+    df                                = load_data(DATASET_PATH)
+    df_results_raw, df_exceptions_raw = run_dq_rules(df)
+    rca                               = root_cause_analysis(df_exceptions_raw)
+    df_clean                          = remediate_data(df, df_results_raw)
+    df_results, df_exceptions         = run_dq_rules(df_clean)
+    scorecard_stats                   = build_scorecard(df_results, df_clean)
     save_outputs(df_clean, df_results, df_exceptions, scorecard_stats)
 
     print("\n" + "=" * 65)

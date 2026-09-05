@@ -1,6 +1,6 @@
 DQ_Dimension,Rules_Count,Avg_Pass_Rate,Total_Failed,Rules_Passing,Rules_Warning,Rules_Failing,Dimension_Score,Dimension_Grade
-Accuracy,2,99.43,123,0,2,0,99.43,A
-Completeness,2,98.44,337,0,2,0,98.44,B
+Accuracy,2,94.54,1117,0,1,1,94.54,C
+Completeness,2,89.96,2055,0,0,2,89.96,C
 Consistency,1,100.0,0,1,0,0,100.0,A
 Uniqueness,1,100.0,0,1,0,0,100.0,A
-Validity,9,99.56,424,7,2,0,99.56,A
+Validity,9,98.94,981,6,3,0,98.94,B

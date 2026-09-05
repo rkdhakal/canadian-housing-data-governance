@@ -623,6 +623,11 @@ def tab_executive():
 
     # ── Metric cards ──
     st.markdown('<p class="section-heading">Overall Data Quality Metrics</p>', unsafe_allow_html=True)
+    st.caption(
+        "This is the health check a data steward runs before this dataset ships to a "
+        "federal report or funding decision. The score reflects the data after automated "
+        "remediation; anything still flagged needs a human to review it, not a script."
+    )
     c1, c2, c3, c4, c5 = st.columns(5)
     c1.metric("Overall DQ Score", f"{overall_score:.1f}%", f"Grade: {overall_grade}")
     c2.metric("Rules Passed ✅", n_pass, f"of {n_pass + n_warn + n_fail} rules")
@@ -631,6 +636,12 @@ def tab_executive():
     c5.metric("Clean Records %", f"{clean_pct:.1f}%")
 
     st.markdown("<br>", unsafe_allow_html=True)
+
+    st.caption(
+        "The bars on the left show pass rate by dimension against target and warn lines. "
+        "Anything red or gold missed its target after remediation and still needs attention. "
+        "The donut on the right is the same 15 rules grouped by PASS, WARN, or FAIL status."
+    )
 
     # ── Charts row 1 ──
     col_left, col_right = st.columns([3, 2])
@@ -659,6 +670,11 @@ def tab_executive():
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown('<p class="section-heading">Data Quality by Critical Data Element (CDE)</p>',
                     unsafe_allow_html=True)
+        st.caption(
+            "CDEs are the fields the business actually depends on, not every column in the file. "
+            "This table shows which of those load-bearing fields still have quality problems "
+            "after remediation, so effort goes where it matters most."
+        )
 
         def grade_color(g):
             mapping = {"A": "#d4edda", "B": "#fff3cd", "C": "#f8d7da", "D": "#f8d7da"}
@@ -851,6 +867,10 @@ def tab_exceptions(role):
     ] if c in filtered.columns]
 
     st.markdown('<p class="section-heading">Exception Records</p>', unsafe_allow_html=True)
+    st.caption(
+        "These are the exact records that would have reached a federal report or policy "
+        "decision uncorrected, before this framework caught them."
+    )
 
     # ── Role-based masking (real data — AVERAGE_PRICE_CAD is classified Internal) ──
     # apply_masking defaults to the housing dataset's classification.

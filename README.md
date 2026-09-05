@@ -1,21 +1,21 @@
 # 🏠 Canadian Housing Data Governance & Quality Framework
 
-**An end-to-end data governance and data quality framework applied to Canadian housing data — demonstrating metadata cataloging, data lineage, stewardship, DQ rule execution, and quality scorecards.**
+**An end-to-end data governance and data quality framework applied to Canadian housing data, demonstrating metadata cataloging, data lineage, stewardship, DQ rule execution, and quality scorecards.**
 
 **Author:** Ram Krishna Dhakal  
-**Tools:** Python · SQL · Streamlit · Plotly — patterns modelled on Informatica IDMC & Collibra  
-**Dataset:** Synthetic — modelled on CMHC Housing Starts, Canada (2018–2023) | 10,800 records · 16 columns · 10 provinces  
+**Tools:** Python · SQL · Streamlit · Plotly (patterns modelled on Informatica IDMC & Collibra)  
+**Dataset:** Synthetic, modelled on CMHC Housing Starts, Canada (2018–2023) | 10,800 records · 16 columns · 10 provinces  
 **Live Dashboard:** [Interactive DQ Dashboard](https://cmhc-housing-data-governance-zaslgtkfkxi5n5agrz87th.streamlit.app)
 
-> ⚠️ **Independent personal portfolio project.** Not affiliated with, endorsed by, or representing Canada Mortgage and Housing Corporation (CMHC). It runs on a **synthetic dataset modeled after** CMHC's public housing starts data — see [Dataset Note](#-dataset-note) for details. It applies governance patterns I learned during my CMHC internship, built independently on my own time. All system names, team structures, data owners, and incident narratives in the governance artifacts are **illustrative** — they model a typical enterprise data environment and do not describe any organization's internal systems or processes.
+> ⚠️ **Independent personal portfolio project.** Not affiliated with, endorsed by, or representing Canada Mortgage and Housing Corporation (CMHC). It runs on a **synthetic dataset modeled after** CMHC's public housing starts data. See [Dataset Note](#-dataset-note) for details. It applies governance patterns I learned during my CMHC internship, built independently on my own time. All system names, team structures, data owners, and incident narratives in the governance artifacts are **illustrative**. They model a typical enterprise data environment and do not describe any organization's internal systems or processes.
 
 ---
 
 ## 🎯 Why This Project Exists
 
-Canada Mortgage and Housing Corporation (CMHC) publishes housing starts data that directly feeds into federal GDP reporting, mortgage insurance thresholds, affordable housing funding allocation, and provincial policy decisions. When this data has quality issues — missing values, invalid entries, inconsistent records across systems — the downstream consequences affect billions of dollars in policy decisions.
+Canada Mortgage and Housing Corporation (CMHC) publishes housing starts data that directly feeds into federal GDP reporting, mortgage insurance thresholds, affordable housing funding allocation, and provincial policy decisions. When this data has quality issues (missing values, invalid entries, inconsistent records across systems), the downstream consequences affect billions of dollars in policy decisions.
 
-**This project demonstrates standard enterprise governance patterns** — metadata cataloging, CDE identification, data lineage, stewardship frameworks, DQ rule design, and quality scorecards — applied end-to-end to a synthetic housing dataset, implemented with open-source tools (Python and SQL) instead of licensed platforms such as Informatica IDMC or Collibra.
+**This project demonstrates standard enterprise governance patterns** (metadata cataloging, CDE identification, data lineage, stewardship frameworks, DQ rule design, and quality scorecards), applied end-to-end to a synthetic housing dataset, implemented with open-source tools (Python and SQL) instead of licensed platforms such as Informatica IDMC or Collibra.
 
 It is designed to demonstrate the **full governance lifecycle** as practiced in a real enterprise environment:
 
@@ -27,11 +27,11 @@ It is designed to demonstrate the **full governance lifecycle** as practiced in 
 
 | What was done | Why it matters |
 |---|---|
-| Identified **884 data quality exceptions** across 2 Critical Data Elements (751 unique records) | These are the exact records that would produce incorrect housing starts reports and policy metrics if left undetected |
-| Built **15 executable DQ rules** with SQL logic across completeness, validity, uniqueness, accuracy, and consistency dimensions | Follows the industry-standard rule design and validation workflow used by enterprise DQ platforms such as Informatica IDMC — DQ dimensions, severity classification, and escalation logic |
-| Documented **complete 5-layer end-to-end lineage** from source permit offices to federal policy reports | Enables audit traceability — a regulator or data steward can trace any number in a published report back to its source system |
-| Identified **6 Critical Data Elements** with business justification and column-level lineage | CDEs are the foundation of any governance program — knowing which fields matter most determines where you invest DQ effort |
-| Established a **stewardship operating model** with RACI matrix and 4-level escalation framework | This is the people and process layer that most portfolio projects skip — governance isn't just rules, it's accountability |
+| Identified **4,153 data quality exceptions** across 4 Critical Data Elements (3,424 unique records) | These are the exact records that would produce incorrect housing starts reports and policy metrics if left undetected |
+| Built **15 executable DQ rules** with SQL logic across completeness, validity, uniqueness, accuracy, and consistency dimensions | Follows the industry-standard rule design and validation workflow used by enterprise DQ platforms such as Informatica IDMC: DQ dimensions, severity classification, and escalation logic |
+| Documented **complete 5-layer end-to-end lineage** from source permit offices to federal policy reports | Enables audit traceability: a regulator or data steward can trace any number in a published report back to its source system |
+| Identified **6 Critical Data Elements** with business justification and column-level lineage | CDEs are the foundation of any governance program: knowing which fields matter most determines where you invest DQ effort |
+| Established a **stewardship operating model** with RACI matrix and 4-level escalation framework | This is the people and process layer that most portfolio projects skip. Governance isn't just rules, it's accountability |
 | Produced **catalog artifacts compatible with Collibra Data Intelligence Cloud** | The CSV-based catalog, glossary, and stewardship files can be directly imported into enterprise governance platforms |
 | Built an **interactive Streamlit DQ dashboard** with live scorecard, exception explorer, and custom dataset validation | Mirrors the governance reporting and steward review workflows found in enterprise DQ and catalog platforms |
 
@@ -45,7 +45,7 @@ It is designed to demonstrate the **full governance lifecycle** as practiced in 
 |-----|---------------|
 | **Executive Scorecard** | Overall DQ score, dimension scores, rule-by-rule pass rates, CDE table |
 | **DQ Rules** | Filterable rule catalogue with full detail, SQL logic, and CSV download |
-| **Exception Explorer** | 884 exceptions filterable by dimension, rule, province, dwelling type |
+| **Exception Explorer** | 4,153 exceptions filterable by dimension, rule, province, dwelling type |
 | **Run on Your Data** | Upload any CMHC-format CSV and run all 15 rules live |
 
 ---
@@ -64,37 +64,37 @@ It is designed to demonstrate the **full governance lifecycle** as practiced in 
 
 - **16 columns fully documented** with business name, data type, description, valid values, and governance metadata
 - **6 Critical Data Elements (CDEs)** identified with business justification:
-  - `HOUSING_STARTS` — Primary KPI; used in federal GDP reporting and funding allocation
-  - `AVERAGE_PRICE_CAD` — Core affordability metric; drives mortgage insurance thresholds
-  - `REF_DATE` — Core temporal dimension; required for all trend analysis
-  - `GEO` — Primary geographic dimension; provincial policy reporting
-  - `DWELLING_TYPE` — Housing policy segmentation
-  - `INTENDED_MARKET` — Rental vs. ownership market analysis
+  - `HOUSING_STARTS`: Primary KPI; used in federal GDP reporting and funding allocation
+  - `AVERAGE_PRICE_CAD`: Core affordability metric; drives mortgage insurance thresholds
+  - `REF_DATE`: Core temporal dimension; required for all trend analysis
+  - `GEO`: Primary geographic dimension; provincial policy reporting
+  - `DWELLING_TYPE`: Housing policy segmentation
+  - `INTENDED_MARKET`: Rental vs. ownership market analysis
 - **Sensitivity classification** applied: Public / Internal / Confidential
 - **Data ownership** mapped: CDO → Data Owner → Data Steward → Custodian
-- **Regulatory applicability** assessed: PIPEDA (not applicable — no PII), OSFI B-20 (indirect — AVERAGE_PRICE_CAD feeds mortgage insurance thresholds), Open Government Licence – Canada (applicable — source data)
+- **Regulatory applicability** assessed: PIPEDA (not applicable, no PII), OSFI B-20 (indirect, AVERAGE_PRICE_CAD feeds mortgage insurance thresholds), Open Government Licence – Canada (applicable, source data)
 
 ### 2. Data Lineage (5-Layer End-to-End)
 
 ```mermaid
 graph LR
-    subgraph SOURCE ["🏗️ Layer 1 — Source"]
+    subgraph SOURCE ["🏗️ Layer 1: Source"]
         S1["🏛️ Municipal Building<br/>Permit Offices"]
         S2["📋 Field Surveyor<br/>Network"]
         S3["💰 Housing<br/>Price Survey"]
     end
-    subgraph INGEST ["📥 Layer 2 — Ingestion"]
+    subgraph INGEST ["📥 Layer 2: Ingestion"]
         I1["🗄️ Housing Market<br/>Data Portal"]
     end
-    subgraph PROCESS ["⚙️ Layer 3 — Processing"]
+    subgraph PROCESS ["⚙️ Layer 3: Processing"]
         P1["🔍 Enterprise DQ Platform<br/><i>(e.g. Informatica IDMC)</i>"]
         P2["📚 Governance Catalog<br/><i>(e.g. Collibra)</i>"]
         P3["🐍 Python DQ Engine<br/><i>dq_engine.py · app.py</i>"]
     end
-    subgraph PUBLISH ["📤 Layer 4 — Publication"]
+    subgraph PUBLISH ["📤 Layer 4: Publication"]
         PB1["🌐 Public Open Data Repository<br/><i>(e.g. StatCan CODR)</i>"]
     end
-    subgraph CONSUME ["📊 Layer 5 — Consumption"]
+    subgraph CONSUME ["📊 Layer 5: Consumption"]
         C1["📈 Power BI Dashboard"]
         C2["🏛️ Federal Policy Reports"]
         C3["🔬 Data Science Teams"]
@@ -143,20 +143,20 @@ graph LR
 
 | Rule ID | Rule Name | Dimension | Pass Rate | Status |
 |---------|-----------|-----------|-----------|--------|
-| DQ-001 | Housing Starts Completeness | Completeness | 98.12% | ⚠ WARN |
-| DQ-002 | Housing Starts Non-Negative | Validity | 97.16% | ⚠ WARN |
-| DQ-003 | Average Price Completeness | Completeness | 98.76% | ⚠ WARN |
-| DQ-004 | Average Price Non-Negative | Validity | 98.92% | ⚠ WARN |
-| DQ-005 | Average Price Ceiling | Validity | 100.00% | ✅ PASS |
+| DQ-001 | Housing Starts Completeness | Completeness | 89.96% | ❌ FAIL |
+| DQ-002 | Housing Starts Non-Negative | Validity | 100.00% | ✅ PASS |
+| DQ-003 | Average Price Completeness | Completeness | 89.97% | ❌ FAIL |
+| DQ-004 | Average Price Non-Negative | Validity | 100.00% | ✅ PASS |
+| DQ-005 | Average Price Ceiling | Validity | 97.01% | ⚠ WARN |
 | DQ-006 | GEO_CODE Referential Integrity | Validity | 100.00% | ✅ PASS |
-| DQ-007 | Dwelling Type Domain Validity | Validity | 100.00% | ✅ PASS |
-| DQ-008 | Intended Market Domain Validity | Validity | 100.00% | ✅ PASS |
+| DQ-007 | Dwelling Type Domain Validity | Validity | 96.70% | ⚠ WARN |
+| DQ-008 | Intended Market Domain Validity | Validity | 96.71% | ⚠ WARN |
 | DQ-009 | Reference Date Format | Validity | 100.00% | ✅ PASS |
 | DQ-010 | Grain Uniqueness | Uniqueness | 100.00% | ✅ PASS |
 | DQ-011 | Reference Date Not Future | Validity | 100.00% | ✅ PASS |
 | DQ-012 | Status Code Validity | Validity | 100.00% | ✅ PASS |
-| DQ-013 | Housing Starts Accuracy — Statistical Range | Accuracy | 99.94% | ⚠ WARN |
-| DQ-014 | Average Price Accuracy — Statistical Range | Accuracy | 98.92% | ⚠ WARN |
+| DQ-013 | Housing Starts Accuracy, Statistical Range | Accuracy | 96.01% | ⚠ WARN |
+| DQ-014 | Average Price Accuracy, Statistical Range | Accuracy | 93.07% | ❌ FAIL |
 | DQ-015 | GEO and GEO_CODE Consistency | Consistency | 100.00% | ✅ PASS |
 
 Each rule includes: SQL logic, severity classification, CDE mapping, remediation guidance, and root cause documentation for failures.
@@ -170,12 +170,12 @@ A YAML-based producer-consumer data contract (`contracts/cmhc_housing_starts.yam
 | `info` | Dataset identity, owner, contact |
 | `servers` | File path, format, delimiter |
 | `terms` | Usage restrictions, licence (Open Government Licence – Canada), notice period |
-| `schema` | All 16 fields — type, nullability, valid values, CDE flag for the 6 critical fields |
+| `schema` | All 16 fields: type, nullability, valid values, CDE flag for the 6 critical fields |
 | `quality.tiers` | Tier 1 (CDEs): 99% warn / 97% critical · Tier 2 (supporting fields): 97% warn / 95% critical |
 | `quality.rules` | All 15 DQ rules mapped to fields, dimensions, and tier thresholds |
 | `serviceLevel` | Monthly update frequency, 7-year retention, 30-day latency SLA |
 
-A standalone validation script (`contracts/validate_contract.py`) checks the dataset against the contract across 6 dimensions — schema, required fields, valid values, numeric ranges, date formats, and SLA thresholds — and exits with a clear PASS / WARN / FAIL report.
+A standalone validation script (`contracts/validate_contract.py`) checks the dataset against the contract across 6 dimensions (schema, required fields, valid values, numeric ranges, date formats, and SLA thresholds) and exits with a clear PASS / WARN / FAIL report.
 
 ```bash
 python contracts/validate_contract.py
@@ -185,45 +185,45 @@ python contracts/validate_contract.py
 
 | Metric | Value |
 |--------|-------|
-| **Overall DQ Score** | **99.45%** |
-| Overall Grade | A |
-| Total Records | 10,800 |
+| **Overall DQ Score** | **97.3%** |
+| Overall Grade | B |
+| Total Records | 10,235 (565 exact-duplicate records removed by remediation) |
 | Total Rules Executed | 15 |
-| Rules PASS / WARN / FAIL | 9 / 6 / 0 |
-| Total Rule Failures | 884 |
-| Clean Records | 93.0% (751 unique records affected) |
-| Completeness Score | 98.44% (B) |
-| Validity Score | 99.56% (A) |
+| Rules PASS / WARN / FAIL | 8 / 4 / 3 |
+| Total Rule Failures | 4,153 |
+| Clean Records | 66.55% (3,424 unique records affected) |
+| Completeness Score | 89.96% (C) |
+| Validity Score | 98.94% (B) |
 | Uniqueness Score | 100.00% (A) |
-| Accuracy Score | 99.43% (A) |
+| Accuracy Score | 94.54% (C) |
 | Consistency Score | 100.00% (A) |
-| **CDEs Requiring Remediation** | HOUSING_STARTS, AVERAGE_PRICE_CAD |
+| **CDEs Requiring Remediation** | HOUSING_STARTS, AVERAGE_PRICE_CAD, DWELLING_TYPE, INTENDED_MARKET |
 
 ### 7. Root Cause Analysis
 
-The DQ engine doesn't just flag failures — it diagnoses them. (Root causes below are **illustrative** — they explain the errors intentionally seeded in the synthetic dataset, demonstrating the RCA workflow.)
+The DQ engine doesn't just flag failures, it diagnoses them. (Root causes below are **illustrative**. They explain the errors intentionally seeded in the synthetic dataset, demonstrating the RCA workflow.)
 
-- **DQ-002 (Negative Housing Starts):** Manual data-entry errors in source municipal permit systems. 307 records affected across all 10 provinces, with QC (37), AB (35), and NS (35) having the highest counts.
-- **DQ-004 (Negative Average Price):** A sign-flip error during CPI adjustment in the price survey pipeline. 117 records affected, distributed across all dwelling types.
-- **DQ-001 & DQ-003 (NULL values):** 203 and 134 null records respectively — flagged for steward review and back-fill from source systems, not auto-remediated.
+- **DQ-002 (Negative Housing Starts):** Manual data-entry errors in source municipal permit systems. 867 records affected across all 10 provinces, with AB (98), ON (94), and NB (83) having the highest counts. Auto-corrected to absolute value during remediation.
+- **DQ-004 (Negative Average Price):** A sign-flip error during CPI adjustment in the price survey pipeline. 876 records affected, distributed across all dwelling types. Auto-corrected to absolute value during remediation.
+- **DQ-001 & DQ-003 (NULL values):** 1,085 and 1,078 null records respectively, flagged for steward review and back-fill from source systems, not auto-remediated.
 
 ### 8. Governance & DAMA-DMBOK Alignment
 
 The project is mapped to the **DAMA-DMBOK2** data management framework and scored for maturity across all 11 knowledge areas, with Data Governance at the hub. The assessment records current vs. target maturity, the evidence behind each score, the gaps, and the improvement initiative that closes each one.
 
-![DAMA-DMBOK maturity radar chart — current vs target](governance/dama_maturity_chart.png)
+![DAMA-DMBOK maturity radar chart (current vs target)](governance/dama_maturity_chart.png)
 
-- **Assessment:** [`governance/dama_alignment.csv`](governance/dama_alignment.csv) — all 11 areas scored 1–5
-- **Narrative & roadmap:** [`governance/README.md`](governance/README.md) — what the wheel is, how to read the scores, and the three improvement workstreams (Security · Scalability & Integration · AI Governance)
+- **Assessment:** [`governance/dama_alignment.csv`](governance/dama_alignment.csv): all 11 areas scored 1–5
+- **Narrative & roadmap:** [`governance/README.md`](governance/README.md): what the wheel is, how to read the scores, and the three improvement workstreams (Security · Scalability & Integration · AI Governance)
 
 ### 9. Data Security & Access Control
 
-A **classification-driven security framework** — access and masking are governed by configuration, not hardcoded to any column, so onboarding a new data source needs **config, not code**. It maps the 6 governance roles to `ALLOW` / `MASK` / `DENY` decisions across three sensitivity tiers, applies five masking methods (banding, hashing, redaction, partial, plus column denial), and records every access in a retention-capped audit log. Enforced live in the dashboard's **🔒 Data Security** tab and Exception Explorer.
+A **classification-driven security framework**. Access and masking are governed by configuration, not hardcoded to any column, so onboarding a new data source needs **config, not code**. It maps the 6 governance roles to `ALLOW` / `MASK` / `DENY` decisions across three sensitivity tiers, applies five masking methods (banding, hashing, redaction, partial, plus column denial), and records every access in a retention-capped audit log. Enforced live in the dashboard's **🔒 Data Security** tab and Exception Explorer.
 
-Because the housing data is aggregate and holds no personal data, the framework is demonstrated against a small, clearly-labelled synthetic fixture to prove it handles Confidential/PII data — a deliberate, documented design decision.
+Because the housing data is aggregate and holds no personal data, the framework is demonstrated against a small, clearly-labelled synthetic fixture to prove it handles Confidential/PII data. This is a deliberate, documented design decision.
 
-- **Policy & rationale:** [`docs/data_security_policy.md`](docs/data_security_policy.md) — classification scheme, role model, masking methods, audit, and the production boundaries not implemented
-- **Framework:** [`security/`](security/) — access matrix, classification register, masking policy, engine, and audit log
+- **Policy & rationale:** [`docs/data_security_policy.md`](docs/data_security_policy.md): classification scheme, role model, masking methods, audit, and the production boundaries not implemented
+- **Framework:** [`security/`](security/): access matrix, classification register, masking policy, engine, and audit log
 
 ---
 
@@ -278,7 +278,7 @@ canadian-housing-data-governance/
 ├── governance/
 │   ├── dama_alignment.csv                           # DAMA-DMBOK maturity assessment (11 areas)
 │   ├── dama_maturity_chart.py                       # Generates the maturity radar chart from the CSV
-│   ├── dama_maturity_chart.png                      # Radar chart — current vs target maturity
+│   ├── dama_maturity_chart.png                      # Radar chart, current vs target maturity
 │   └── README.md                                    # DAMA alignment narrative & improvement roadmap
 │
 ├── security/
@@ -301,8 +301,8 @@ canadian-housing-data-governance/
 | Tool | How It's Used |
 |------|---------------|
 | **Python (pandas, numpy)** | DQ rule execution, scorecard calculation, data profiling |
-| **Streamlit + Plotly** | Interactive DQ dashboard — executive scorecard, exception explorer, live rule validation |
-| **SQL** | All 15 DQ rules written as executable SQL — the same pattern enterprise DQ platforms use for rule validation |
+| **Streamlit + Plotly** | Interactive DQ dashboard: executive scorecard, exception explorer, live rule validation |
+| **SQL** | All 15 DQ rules written as executable SQL, the same pattern enterprise DQ platforms use for rule validation |
 | **Collibra** *(pattern reference)* | Metadata catalog structure, business glossary, stewardship workflows, and governance roles in this project follow the patterns used in enterprise governance platforms like Collibra Data Intelligence Cloud |
 | **Informatica IDMC** *(pattern reference)* | DQ rule design, exception management, and severity/remediation patterns in this project mirror the workflows of enterprise DQ rule engines like Informatica IDMC |
 | **CSV / Excel-ready outputs** | All governance artifacts are exportable to Power BI dashboards or importable into enterprise catalog platforms |
@@ -340,10 +340,10 @@ streamlit run app.py
 ```
 
 **Outputs after running `dq_engine.py`:**
-- `data/processed/cmhc_housing_starts_remediated.csv` — Cleaned dataset with DQ flags
-- `data/processed/dq_exceptions.csv` — Record-level exception log
-- `scorecard/dq_execution_scorecard.csv` — Rule-level results
-- `scorecard/dq_scorecard_summary.csv` — Overall scorecard with grade
+- `data/processed/cmhc_housing_starts_remediated.csv`: Cleaned dataset with DQ flags
+- `data/processed/dq_exceptions.csv`: Record-level exception log
+- `scorecard/dq_execution_scorecard.csv`: Rule-level results
+- `scorecard/dq_scorecard_summary.csv`: Overall scorecard with grade
 
 **Dashboard available at** `http://localhost:8501`
 
@@ -353,10 +353,10 @@ streamlit run app.py
 
 This project demonstrates governance patterns. In a real enterprise implementation, I would add:
 
-- **Automated scheduling** — Run dq_engine.py on a monthly schedule via Airflow or Azure Data Factory, triggered when new source data arrives, rather than executing manually against a static CSV
-- **Live Collibra integration** — Push DQ scores, rule results, and exception counts directly into Collibra via REST API after each run, so the catalog reflects current data quality without manual CSV imports
-- **DQ trend monitoring** — Append each scorecard run to a history table and plot scores over time in the dashboard, so stewards can see whether quality is improving, degrading, or stable across months
-- **Incident management integration** — Route FAIL and WARN exceptions automatically into ServiceNow or Jira with rule ID, severity, CDE, and assigned steward — replacing the current manual escalation step with a tracked, SLA-bound workflow
+- **Automated scheduling**: Run dq_engine.py on a monthly schedule via Airflow or Azure Data Factory, triggered when new source data arrives, rather than executing manually against a static CSV
+- **Live Collibra integration**: Push DQ scores, rule results, and exception counts directly into Collibra via REST API after each run, so the catalog reflects current data quality without manual CSV imports
+- **DQ trend monitoring**: Append each scorecard run to a history table and plot scores over time in the dashboard, so stewards can see whether quality is improving, degrading, or stable across months
+- **Incident management integration**: Route FAIL and WARN exceptions automatically into ServiceNow or Jira with rule ID, severity, CDE, and assigned steward, replacing the current manual escalation step with a tracked, SLA-bound workflow
 
 ---
 
