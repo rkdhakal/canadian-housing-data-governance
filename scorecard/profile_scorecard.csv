@@ -1,2 +1,0 @@
-Dataset,Profile_Date,Total_Records,Total_Columns,CDE_Count,Completeness_Score,Validity_Score,Uniqueness_Score,Overall_DQ_Score,Overall_Grade,Total_Null_Cells,Columns_With_Nulls,Domain_Checks_Run,Domain_Checks_Failed
-cmhc_housing_starts_2018_2023,2026-04-09 04:11,10800,16,6,96.0,99.51,100.0,98.5,B,6918,3,8,2

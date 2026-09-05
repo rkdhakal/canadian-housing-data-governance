@@ -602,6 +602,19 @@ def save_outputs(df_clean, df_results, df_exceptions, scorecard_stats):
     pd.DataFrame(_dim_rows).to_csv("scorecard/dq_scorecard_by_dimension.csv", index=False)
     print(f"      ✓ By-dimension scorecard → scorecard/dq_scorecard_by_dimension.csv")
 
+    _cde_rows = []
+    for _cde, _grp in df_results.groupby("CDE_Affected"):
+        _avg = round(_grp["Pass_Rate_Pct"].mean(), 2)
+        _failed = int(_grp["Records_Failed"].sum())
+        _cde_rows.append({
+            "CDE": _cde, "Rules_Applied": len(_grp),
+            "Avg_Pass_Rate": _avg, "Total_Failed_Records": _failed,
+            "CDE_Grade": "A" if _avg >= 99 else ("B" if _avg >= 95 else "C"),
+            "Action_Required": "Yes" if _failed > 0 else "No"
+        })
+    pd.DataFrame(_cde_rows).to_csv("scorecard/dq_scorecard_by_cde.csv", index=False)
+    print(f"      ✓ By-CDE scorecard     → scorecard/dq_scorecard_by_cde.csv")
+
 
 # ── MAIN ──────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":

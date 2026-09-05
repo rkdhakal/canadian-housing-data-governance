@@ -1,9 +1,0 @@
-Column,Check,Failed_Records,Failed_Pct,Status
-GEO_CODE,Invalid province/territory code,0,0.0,PASS
-DWELLING_TYPE,Invalid dwelling type,0,0.0,PASS
-INTENDED_MARKET,Invalid intended market,0,0.0,PASS
-STATUS,Invalid status code,0,0.0,PASS
-SURVEY_METHOD,Invalid survey method,0,0.0,PASS
-HOUSING_STARTS,Negative housing starts,307,2.84,WARN
-AVERAGE_PRICE_CAD,Negative average price,117,1.08,WARN
-AVERAGE_PRICE_CAD,Price exceeds $10M ceiling,0,0.0,PASS
